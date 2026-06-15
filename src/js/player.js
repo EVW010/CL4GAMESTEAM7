@@ -5,8 +5,8 @@ import { Resources } from './resources.js'
 export class Player extends Actor {
 
     game;
-    movementSpeed = 120;
-    rotationSpeed = 0.05;
+    movementSpeed = 0.75;
+    rotationSpeed = 0.045;
     hp;
 
     constructor() {
@@ -15,7 +15,8 @@ export class Player extends Actor {
 
     onInitialize(engine) {
         this.game = engine;
-        this.pos = new Vector(100, 100);
+        this.pos = new Vector(1.5, 1.5);
+        this.rotation = 0;
         this.graphics.use(Resources.PlayerTopDown.toSprite());
         this.scale = new Vector(0.035, 0.035);
     }
@@ -33,23 +34,20 @@ export class Player extends Actor {
         this.vel = new Vector(0, 0);
 
         if (engine.input.keyboard.isHeld(Keys.A)) {
-            this.vel.x -= Math.cos(this.rotation)*this.movementSpeed;
-            this.vel.y -= Math.sin(this.rotation)*this.movementSpeed;
-        }
-        if (engine.input.keyboard.isHeld(Keys.D)) {
-            this.vel.x += Math.cos(this.rotation)*this.movementSpeed;
-            this.vel.y += Math.sin(this.rotation)*this.movementSpeed;
-        }
-        if (engine.input.keyboard.isHeld(Keys.W)) {
             this.vel.x += Math.sin(this.rotation)*this.movementSpeed;
             this.vel.y -= Math.cos(this.rotation)*this.movementSpeed;
         }
-        if (engine.input.keyboard.isHeld(Keys.S)) {
+        if (engine.input.keyboard.isHeld(Keys.D)) {
             this.vel.x -= Math.sin(this.rotation)*this.movementSpeed;
             this.vel.y += Math.cos(this.rotation)*this.movementSpeed;
         }
-
-        
-
+        if (engine.input.keyboard.isHeld(Keys.W)) {
+            this.vel.x += Math.cos(this.rotation)*this.movementSpeed;
+            this.vel.y += Math.sin(this.rotation)*this.movementSpeed;
+        }
+        if (engine.input.keyboard.isHeld(Keys.S)) {
+            this.vel.x -= Math.cos(this.rotation)*this.movementSpeed;
+            this.vel.y -= Math.sin(this.rotation)*this.movementSpeed;
+        }
     }
 }

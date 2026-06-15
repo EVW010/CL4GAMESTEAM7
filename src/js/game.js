@@ -6,7 +6,7 @@ import { Player } from './player.js'
 
 export class Game extends Engine {
 
-    playerl;
+    player;
   
     constructor() {
         super({
@@ -16,14 +16,13 @@ export class Game extends Engine {
             displayMode: DisplayMode.FitScreen
          })
         
+        this.start(ResourceLoader).then(() => this.startGame())
     }
 
     startGame() {
         console.log("start de game!")
-        this.player = new Player();
-        this.add(this.player);
-        this.add('maplevel1', new MapLevel1(this.player))
-        this.start(ResourceLoader).then(() => this.startGame())
+        
+        this.add('maplevel1', new MapLevel1())
         this.goToScene('maplevel1')
         
     }

@@ -1,5 +1,6 @@
 import { Scene, Canvas, Actor } from 'excalibur'
 import wallTextureUrl from './assets/walls/wall1.png'
+import { Player } from '../../player.js'
 
 // . = floor, # = wall
 const MAP = [
@@ -21,14 +22,15 @@ const SCREEN_H = 720
 const RAYS = 200
 const FOV = Math.PI / 3
 
-const player = {
-    x: 1.5,
-    y: 1.5,
-    angle: 0,
-}
-
 export class MapLevel1 extends Scene {
+
+    player;
+
     onInitialize(engine) {
+
+        this.player = new Player();
+        this.add(this.player);
+
         this.wallImg = new Image()
         this.wallImg.src = wallTextureUrl
         this.wallImgLoaded = false
@@ -48,8 +50,8 @@ export class MapLevel1 extends Scene {
     }
 
     castRay(angle) {
-        let x = player.x
-        let y = player.y
+        let x = this.player.pos.x
+        let y = this.player.pos.y
         const dx = Math.cos(angle)
         const dy = Math.sin(angle)
 
@@ -60,7 +62,7 @@ export class MapLevel1 extends Scene {
             if (++i > 800) break
         }
 
-        const distance = Math.sqrt((x - player.x) ** 2 + (y - player.y) ** 2)
+        const distance = Math.sqrt((x - this.player.pos.x) ** 2 + (y - this.player.pos.y) ** 2)
         // pick the axis-aligned wall face to get a stable texture coordinate
         const raw = Math.abs(dx) > Math.abs(dy) ? y : x
         const texX = ((raw % 1) + 1) % 1
@@ -101,7 +103,7 @@ export class MapLevel1 extends Scene {
         ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
 
         for (let i = 0; i < RAYS; i++) {
-            const rayAngle = player.angle - FOV / 2 + i * angleStep
+            const rayAngle = this.player.rotation - FOV / 2 + i * angleStep
             const { distance, wallHeight, texX } = this.castRay(rayAngle)
             this.drawWallSlice(ctx, i, distance, wallHeight, sliceWidth, texX)
         }
