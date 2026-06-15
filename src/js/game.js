@@ -1,7 +1,7 @@
 import '../css/style.css'
 import { Actor, Engine, Vector, DisplayMode } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
-import { MapLevel1 } from './maps/MapLevel1.js'
+import { MapLevel1 } from './maps/level1/MapLevel1.js'
 
 export class Game extends Engine {
 
