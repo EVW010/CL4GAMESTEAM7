@@ -2,7 +2,7 @@ import '../css/style.css'
 import { Actor, Engine, Vector, DisplayMode, SpriteSheet, ImageFiltering } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { RenderObject } from './renderBase/renderbase.js'
-import { Dummy } from './dummyplayer.js'
+import { Player } from './player.js'
 import { MapLevel1 } from './maps/level1/MapLevel1.js'
 
 export class Game extends Engine {
