@@ -1,5 +1,5 @@
 import '../css/style.css'
-import { Actor, Engine, Vector, DisplayMode, SpriteSheet } from "excalibur"
+import { Actor, Engine, Vector, DisplayMode, SpriteSheet, ImageFiltering } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { RenderObject } from './renderBase/renderbase.js'
 import { Dummy } from './dummyplayer.js'
@@ -11,7 +11,10 @@ export class Game extends Engine {
             width: 1280,
             height: 720,
             maxFps: 60,
-            displayMode: DisplayMode.FitScreen
+            displayMode: DisplayMode.FitScreen,
+            antialiasing: {
+                filtering: ImageFiltering.Pixel
+            }
          })
 
         this.PLAYER = new Dummy()
@@ -27,7 +30,7 @@ export class Game extends Engine {
 
         this.add(this.PLAYER)
         console.log("start de game!")
-        let v = new RenderObject(new Vector(0, 0), 0, this.PLAYER)
+        let v = new RenderObject(new Vector(50, 50.1), 0, this.PLAYER)
         this.add(v)
         
     }
