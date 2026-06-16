@@ -1,9 +1,9 @@
-import { Scene, Canvas, Actor } from 'excalibur'
+import { Scene, Canvas, Actor, CollisionType } from 'excalibur'
 import wallTextureUrl from './assets/walls/wall1.png'
 import { Player } from '../../player.js'
 
 // . = floor, # = wall
-const MAP = [
+export const MAP = [
     '####################',
     '#..................#',
     '#.##..#.###.#.#.##.#',
@@ -31,6 +31,21 @@ export class MapLevel1 extends Scene {
         this.player = new Player();
         this.add(this.player);
 
+        for (let y = 0; y < MAP.length; y++) {
+            for (let x = 0; x < MAP[y].length; x++) {
+                if (MAP[y][x] === '#') {
+                    const wall = new Actor({
+                        x: x + 0.5,
+                        y: y + 0.2,
+                        width: 1,
+                        height: 1,
+                        collisionType: CollisionType.Fixed,
+                    })
+                    this.add(wall)
+                }
+            }
+        }
+
         this.wallImg = new Image()
         this.wallImg.src = wallTextureUrl
         this.wallImgLoaded = false
@@ -50,23 +65,40 @@ export class MapLevel1 extends Scene {
     }
 
     castRay(angle) {
-        let x = this.player.pos.x
-        let y = this.player.pos.y
+        const px = this.player.pos.x
+        const py = this.player.pos.y
         const dx = Math.cos(angle)
         const dy = Math.sin(angle)
 
-        let i = 0
-        while (MAP[Math.floor(y)]?.[Math.floor(x)] !== '#') {
-            x += dx * 0.05
-            y += dy * 0.05
-            if (++i > 800) break
+        let mapX = Math.floor(px)
+        let mapY = Math.floor(py)
+
+        const deltaDistX = Math.abs(dx) < 1e-10 ? 1e10 : Math.abs(1 / dx)
+        const deltaDistY = Math.abs(dy) < 1e-10 ? 1e10 : Math.abs(1 / dy)
+
+        let stepX, stepY, sideDistX, sideDistY
+        if (dx < 0) { stepX = -1; sideDistX = (px - mapX) * deltaDistX }
+        else         { stepX =  1; sideDistX = (mapX + 1 - px) * deltaDistX }
+        if (dy < 0) { stepY = -1; sideDistY = (py - mapY) * deltaDistY }
+        else         { stepY =  1; sideDistY = (mapY + 1 - py) * deltaDistY }
+
+        let side = 0
+        for (let i = 0; i < 100; i++) {
+            if (sideDistX < sideDistY) { sideDistX += deltaDistX; mapX += stepX; side = 0 }
+            else                        { sideDistY += deltaDistY; mapY += stepY; side = 1 }
+            if (MAP[mapY]?.[mapX] === '#') break
         }
 
-        const distance = Math.sqrt((x - this.player.pos.x) ** 2 + (y - this.player.pos.y) ** 2)
-        // pick the axis-aligned wall face to get a stable texture coordinate
-        const raw = Math.abs(dx) > Math.abs(dy) ? y : x
-        const texX = ((raw % 1) + 1) % 1
-        return { distance, wallHeight: 300 / distance, texX }
+        let perpDist, texX
+        if (side === 0) {
+            perpDist = sideDistX - deltaDistX
+            texX = ((py + perpDist * dy) % 1 + 1) % 1
+        } else {
+            perpDist = sideDistY - deltaDistY
+            texX = ((px + perpDist * dx) % 1 + 1) % 1
+        }
+
+        return { distance: perpDist, wallHeight: 300 / perpDist, texX }
     }
 
     drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX) {
@@ -75,7 +107,7 @@ export class MapLevel1 extends Scene {
         if (!this.wallImgLoaded) {
             const c = Math.floor(180 / (1 + distance / 4))
             ctx.fillStyle = `rgb(${c},0,0)`
-            ctx.fillRect(col * sliceWidth, top, sliceWidth, wallHeight)
+            ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, wallHeight)
             return
         }
 
@@ -83,13 +115,12 @@ export class MapLevel1 extends Scene {
         ctx.drawImage(
             this.wallImg,
             srcX, 0, 1, this.wallImg.height,
-            col * sliceWidth, top, sliceWidth, wallHeight
+            col * sliceWidth, top, sliceWidth + 1, wallHeight
         )
 
-        // darken slices that are farther away
         const alpha = Math.min(0.85, distance / 8)
         ctx.fillStyle = `rgba(0,0,0,${alpha})`
-        ctx.fillRect(col * sliceWidth, top, sliceWidth, wallHeight)
+        ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, wallHeight)
     }
 
     drawScene(ctx) {
@@ -112,8 +143,8 @@ export class MapLevel1 extends Scene {
     }
 
     drawMiniMap(ctx) {
-        const miniMapScaleX = 8
-        const miniMapScaleY = 8
+        const miniMapScaleX = 6
+        const miniMapScaleY = 6
         const offsetX = SCREEN_W - MAP[0].length * miniMapScaleX - 10
         const offsetY = 10
         const xStart = 0
