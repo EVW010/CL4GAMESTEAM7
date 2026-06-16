@@ -1,6 +1,7 @@
-import { Actor, Engine, Vector, DisplayMode, Keys } from "excalibur"
+import { Actor, Engine, Vector, DisplayMode, Keys, CollisionType, Shape } from "excalibur"
 import { Resources } from './resources.js'
 import { BurnerWeapon } from './burner-weapon.js'
+import { MAP } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
 
@@ -23,7 +24,11 @@ export class Player extends Actor {
         this.addChild(new BurnerWeapon());
     }
 
-    onPreUpdate(engine) {
+    isWall(x, y) {
+        return MAP[Math.floor(y)]?.[Math.floor(x)] === '#'
+    }
+
+    onPreUpdate(engine, delta) {
         //rotation
         if (engine.input.keyboard.isHeld(Keys.Left)) {
             this.rotation -= this.rotationSpeed;
@@ -33,23 +38,25 @@ export class Player extends Actor {
         }
 
         //movement
-        this.vel = new Vector(0, 0);
+        const dt = delta / 1000;
+        let moveX = 0;
+        let moveY = 0;
 
         if (engine.input.keyboard.isHeld(Keys.A)) {
-            this.vel.x += Math.sin(this.rotation)*this.movementSpeed;
-            this.vel.y -= Math.cos(this.rotation)*this.movementSpeed;
+            moveX += Math.sin(this.rotation) * this.movementSpeed * dt;
+            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt;
         }
         if (engine.input.keyboard.isHeld(Keys.D)) {
-            this.vel.x -= Math.sin(this.rotation)*this.movementSpeed;
-            this.vel.y += Math.cos(this.rotation)*this.movementSpeed;
+            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt;
+            moveY += Math.cos(this.rotation) * this.movementSpeed * dt;
         }
         if (engine.input.keyboard.isHeld(Keys.W)) {
-            this.vel.x += Math.cos(this.rotation)*this.movementSpeed;
-            this.vel.y += Math.sin(this.rotation)*this.movementSpeed;
+            moveX += Math.cos(this.rotation) * this.movementSpeed * dt;
+            moveY += Math.sin(this.rotation) * this.movementSpeed * dt;
         }
         if (engine.input.keyboard.isHeld(Keys.S)) {
-            this.vel.x -= Math.cos(this.rotation)*this.movementSpeed;
-            this.vel.y -= Math.sin(this.rotation)*this.movementSpeed;
+            moveX -= Math.cos(this.rotation) * this.movementSpeed * dt;
+            moveY -= Math.sin(this.rotation) * this.movementSpeed * dt;
         }
 
         //handicaps
@@ -61,8 +68,19 @@ export class Player extends Actor {
         if (this.oxygenLeven <= 0) {
             this.hp -= 0.1;
         }
-        
-
         console.log(this.oxygenLeven);
+      
+        const margin = 0.15;
+
+        // Prevent player from moving into walls
+        const xEdge = this.pos.x + moveX + Math.sign(moveX) * margin;
+        if (this.isWall(xEdge, this.pos.y + margin) || this.isWall(xEdge, this.pos.y - margin)) moveX = 0;
+
+        const yEdge = this.pos.y + moveY + Math.sign(moveY) * margin;
+        if (this.isWall(this.pos.x + margin, yEdge) || this.isWall(this.pos.x - margin, yEdge)) moveY = 0;
+
+        this.pos.x += moveX;
+        this.pos.y += moveY;
+        this.vel = new Vector(0, 0);
     }
 }
