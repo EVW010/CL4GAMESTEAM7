@@ -1,7 +1,199 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     padding: 0;
-    background-color: rgb(61, 61, 61);
+    background-color: #111;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    image-rendering: pixelated;
+}
+
+/* START SCREEN */
+.start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    background-image: url('../../public/images/titleScreenBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
     display: flex;
     justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.start-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+}
+
+.start-card {
+    position: relative;
+    z-index: 2;
+
+    width: 90%;
+    max-width: 520px;
+    padding: 35px;
+    background-color: rgba(0, 0, 0, 0.72);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 18px;
+    text-align: center;
+}
+
+.start-card h1 {
+    margin: 0 0 20px;
+    font-size: 46px;
+    text-transform: uppercase;
+    color: #ffcc33;
+    text-shadow: 0 0 10px black;
+}
+
+.synopsis {
+    font-size: 17px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    color: #eeeeee;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: #ffcc33;
+    color: #111;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ffd966;
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.secondary-button:hover {
+    background-color: white;
+    color: #111;
+}
+
+.controls-box {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    text-align: left;
+}
+
+.hidden {
+    display: none;
+}
+
+.small-text {
+    margin-top: 18px;
+    font-size: 14px;
+    color: #bbbbbb;
+}
+
+/* GAME OVER SCREEN */
+.end-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.game-over-screen {
+    background-image: url('../../public/images/gameOverBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-over-screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1;
+}
+
+.end-card {
+    position: relative;
+    z-index: 2;
+
+    width: 90%;
+    max-width: 520px;
+    padding: 35px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 2px solid white;
+    border-radius: 18px;
+}
+
+.end-card h1 {
+    margin: 0 0 20px;
+    font-size: 56px;
+    text-transform: uppercase;
+}
+
+.game-over-screen h1 {
+    color: #ff4d4d;
+}
+
+.end-card p {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #dddddd;
+    margin-bottom: 25px;
+}
+
+.end-card button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: #ffcc33;
+    color: #111;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.end-card button:hover {
+    background-color: #ffd966;
+}
+
+.end-card .secondary-button {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.end-card .secondary-button:hover {
+    background-color: white;
+    color: #111;
 }

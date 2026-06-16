@@ -31,11 +31,6 @@ export class WinScene extends Scene {
 
         document.body.appendChild(this.winScreen)
 
-        this.winScreen.querySelector('#play-again-button').addEventListener('click', () => {
-            this.removeWinScreen()
-            this.engine.goToScene('game')
-        })
-
         this.winScreen.querySelector('#menu-button').addEventListener('click', () => {
             this.removeWinScreen()
             this.engine.goToScene('start')

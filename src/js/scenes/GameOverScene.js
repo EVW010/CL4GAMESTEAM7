@@ -31,11 +31,6 @@ export class GameOverScene extends Scene {
 
         document.body.appendChild(this.gameOverScreen)
 
-        this.gameOverScreen.querySelector('#retry-button').addEventListener('click', () => {
-            this.removeGameOverScreen()
-            this.engine.goToScene('game')
-        })
-
         this.gameOverScreen.querySelector('#menu-button').addEventListener('click', () => {
             this.removeGameOverScreen()
             this.engine.goToScene('start')

@@ -71,7 +71,7 @@ export class StartScene extends Scene {
 
     startGame() {
         this.removeStartScreen()
-        this.engine.goToScene('game')
+        this.engine.goToScene('level1')
     }
 
     removeStartScreen() {
