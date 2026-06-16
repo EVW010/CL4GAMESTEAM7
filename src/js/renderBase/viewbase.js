@@ -75,7 +75,7 @@ export class ViewObject extends Actor {
         this.scale.x = scalar
         this.scale.y = scalar
 
-        let screenY = (720 / 2) - (this.linked.vertical / (dist + 0.0001))
+        this.pos.y = (720 / 2) - (this.linked.vertical / (dist + 0.0001))
 
         console.log(this.pos)
     }
