@@ -10,15 +10,13 @@ export class Player extends Actor {
     hp;
 
     constructor() {
-        super({width:Resources.PlayerTopDown.width * 0.85, height:Resources.PlayerTopDown.height * 0.85});
+        super({width:0.8, height:0.8});
     }
 
     onInitialize(engine) {
         this.game = engine;
         this.pos = new Vector(1.5, 1.5);
         this.rotation = 0;
-        this.graphics.use(Resources.PlayerTopDown.toSprite());
-        this.scale = new Vector(0.035, 0.035);
     }
 
     onPreUpdate(engine) {
