@@ -1,11 +1,12 @@
 import '../css/style.css'
 import { Actor, Engine, Vector, DisplayMode } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
+import { MapLevel1 } from './maps/level1/MapLevel1.js'
 
 export class Game extends Engine {
 
     player;
-  
+
     constructor() {
         super({
             width: 1280,
@@ -17,7 +18,9 @@ export class Game extends Engine {
     }
 
     startGame() {
-        console.log("start de game!")
+        const level1 = new MapLevel1()
+        this.addScene('level1', level1)
+        this.goToScene('level1')
     }
 }
 
