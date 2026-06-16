@@ -1,12 +1,12 @@
 import { Actor, Engine, Vector, DisplayMode, Keys, CollisionType, Shape } from "excalibur"
 import { Resources } from './resources.js'
 import { BurnerWeapon } from './burner-weapon.js'
-import { MAP } from './maps/level1/MapLevel1.js'
+import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
 
     game;
-    movementSpeed = 0.75;
+    movementSpeed = 2;
     rotationSpeed = 0.045;
     selectedWeapon = 1;
     burnerWeaponProgress = 0;
@@ -25,7 +25,7 @@ export class Player extends Actor {
     }
 
     isWall(x, y) {
-        return MAP[Math.floor(y)]?.[Math.floor(x)] === '#'
+        return isWallTile(MAP[Math.floor(y)]?.[Math.floor(x)])
     }
 
     onPreUpdate(engine, delta) {

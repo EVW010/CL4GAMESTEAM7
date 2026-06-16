@@ -1,21 +1,25 @@
 import { Scene, Canvas, Actor, CollisionType } from 'excalibur'
 import wallTextureUrl from './assets/walls/wall1.png'
+import treewallTextureUrl from './assets/walls/treewall.png'
+import doorTextureUrl from './assets/walls/door.png'
 import { Player } from '../../player.js'
 
-// . = floor, # = wall
+// . = floor, # = wall, T = treewall, D = door
 export const MAP = [
     '####################',
     '#..................#',
-    '#.##..#.###.#.#.##.#',
+    '#.##..#.TTT.#.#.##.#',
     '#.#.........#..#.#.#',
-    '#.#.####..#.####.#.#',
-    '#..................#',
-    '#.#.####.#.#.####..#',
+    '#.#.####..#.TTTT.#.#',
+    '#..................D',
+    '#.#.TTTT.#.#.####..#',
     '#.#.........#.#..#.#',
-    '#.##..#.###.#.#.##.#',
+    '#.##..#.TTT.#.#.##.#',
     '#..................#',
     '####################',
 ]
+
+export const isWallTile = (char) => char === '#' || char === 'T' || char === 'D'
 
 const SCREEN_W = 1280
 const SCREEN_H = 720
@@ -33,12 +37,8 @@ export class MapLevel1 extends Scene {
 
         for (let y = 0; y < MAP.length; y++) {
             for (let x = 0; x < MAP[y].length; x++) {
-                if (MAP[y][x] === '#') {
+                if (isWallTile(MAP[y][x])) {
                     const wall = new Actor({
-                        x: x + 0.5,
-                        y: y + 0.2,
-                        width: 1,
-                        height: 1,
                         collisionType: CollisionType.Fixed,
                     })
                     this.add(wall)
@@ -50,6 +50,16 @@ export class MapLevel1 extends Scene {
         this.wallImg.src = wallTextureUrl
         this.wallImgLoaded = false
         this.wallImg.onload = () => { this.wallImgLoaded = true }
+
+        this.treewallImg = new Image()
+        this.treewallImg.src = treewallTextureUrl
+        this.treewallImgLoaded = false
+        this.treewallImg.onload = () => { this.treewallImgLoaded = true }
+
+        this.doorImg = new Image()
+        this.doorImg.src = doorTextureUrl
+        this.doorImgLoaded = false
+        this.doorImg.onload = () => { this.doorImgLoaded = true }
 
         const raycastActor = new Actor({ x: SCREEN_W / 2, y: SCREEN_H / 2 })
 
@@ -86,7 +96,7 @@ export class MapLevel1 extends Scene {
         for (let i = 0; i < 100; i++) {
             if (sideDistX < sideDistY) { sideDistX += deltaDistX; mapX += stepX; side = 0 }
             else                        { sideDistY += deltaDistY; mapY += stepY; side = 1 }
-            if (MAP[mapY]?.[mapX] === '#') break
+            if (isWallTile(MAP[mapY]?.[mapX])) break
         }
 
         let perpDist, texX
@@ -98,23 +108,26 @@ export class MapLevel1 extends Scene {
             texX = ((px + perpDist * dx) % 1 + 1) % 1
         }
 
-        return { distance: perpDist, wallHeight: 300 / perpDist, texX }
+        const tileType = MAP[mapY]?.[mapX] ?? '#'
+        return { distance: perpDist, wallHeight: 1000 / perpDist, texX, tileType }
     }
 
-    drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX) {
+    drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX, tileType) {
         const top = Math.floor(SCREEN_H / 2 - wallHeight / 2)
+        const img = tileType === 'T' ? this.treewallImg : tileType === 'D' ? this.doorImg : this.wallImg
+        const imgLoaded = tileType === 'T' ? this.treewallImgLoaded : tileType === 'D' ? this.doorImgLoaded : this.wallImgLoaded
 
-        if (!this.wallImgLoaded) {
+        if (!imgLoaded) {
             const c = Math.floor(180 / (1 + distance / 4))
             ctx.fillStyle = `rgb(${c},0,0)`
             ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, wallHeight)
             return
         }
 
-        const srcX = Math.floor(texX * this.wallImg.width)
+        const srcX = Math.floor(texX * img.width)
         ctx.drawImage(
-            this.wallImg,
-            srcX, 0, 1, this.wallImg.height,
+            img,
+            srcX, 0, 1, img.height,
             col * sliceWidth, top, sliceWidth + 1, wallHeight
         )
 
@@ -135,8 +148,8 @@ export class MapLevel1 extends Scene {
 
         for (let i = 0; i < RAYS; i++) {
             const rayAngle = this.player.rotation - FOV / 2 + i * angleStep
-            const { distance, wallHeight, texX } = this.castRay(rayAngle)
-            this.drawWallSlice(ctx, i, distance, wallHeight, sliceWidth, texX)
+            const { distance, wallHeight, texX, tileType } = this.castRay(rayAngle)
+            this.drawWallSlice(ctx, i, distance, wallHeight, sliceWidth, texX, tileType)
         }
 
         this.drawMiniMap(ctx)
@@ -154,8 +167,8 @@ export class MapLevel1 extends Scene {
 
         for (let y = yStart; y < yEnd; y++) {
             for (let x = xStart; x < xEnd; x++) {
-                const wall = MAP[y][x] === '#'
-                ctx.fillStyle = wall ? 'rgb(150, 0, 150)' : 'rgb(0, 0, 0)'
+                const tile = MAP[y][x]
+                ctx.fillStyle = tile === 'T' ? 'rgb(0, 150, 0)' : tile === '#' ? 'rgb(150, 0, 150)' : 'rgb(0, 0, 0)'
                 ctx.fillRect((x - xStart) * miniMapScaleX + offsetX, (y - yStart) * miniMapScaleY + offsetY, miniMapScaleX, miniMapScaleY)
             }
         }
