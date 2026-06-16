@@ -17,7 +17,7 @@ export class BurnerWeapon extends Actor {
 
             if (engine.input.keyboard.wasPressed(Keys.Space)) {
                 this.attack();
-                this.parent.burnerWeaponProcess++;
+                this.parent.burnerWeaponProgress++;
             }
         }
         

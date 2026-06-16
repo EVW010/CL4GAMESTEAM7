@@ -9,6 +9,7 @@ export class Player extends Actor {
     rotationSpeed = 0.045;
     selectedWeapon = 1;
     burnerWeaponProgress = 0;
+    oxygenLeven = 100;
     hp;
 
     constructor() {
@@ -50,5 +51,18 @@ export class Player extends Actor {
             this.vel.x -= Math.cos(this.rotation)*this.movementSpeed;
             this.vel.y -= Math.sin(this.rotation)*this.movementSpeed;
         }
+
+        //handicaps
+        for (let i = 1; i <= 10; i++) {
+            if (this.burnerWeaponProgress >= i*10 && this.oxygenLeven > 0) {
+                this.oxygenLeven -= 0.02;
+            }
+        }
+        if (this.oxygenLeven <= 0) {
+            this.hp -= 0.1;
+        }
+        
+
+        console.log(this.oxygenLeven);
     }
 }
