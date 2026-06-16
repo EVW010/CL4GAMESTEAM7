@@ -16,8 +16,6 @@ export class RenderObject extends Actor {
         this.dir = dir
         this.pos = spawnerPos
 
-
-
         this.speed = 0
 
         this.linked = new ViewObject(this)

@@ -1,4 +1,4 @@
-import { Actor, Vector, SpriteSheet, Sprite, toRadians } from 'excalibur'
+import { Actor, Vector, SpriteSheet, Sprite, toRadians, toDegrees } from 'excalibur'
 import { RenderObject } from './renderbase'
 import { getQuadFacing, getOctFacing, addAngle} from '../functions'
 
@@ -17,7 +17,6 @@ export class ViewObject extends Actor {
     }
 
     onInitialize(engine) {
-        console.log(this.linked.test)
     }
 
     onPreUpdate(engine) {
@@ -37,14 +36,17 @@ export class ViewObject extends Actor {
 
         let frame = Math.floor(this.animTime / this.frameDuration) % this.totalFrames
 
-        let playerDir = this.PLAYER.dir
-
+        let playerDir = this.PLAYER.rotation
+        
         let rowdir = this.getRow(addAngle(playerDir, this.linked.dir))
+
+        console.log(playerDir, this.linked.dir)
+
 
         let sprite = this.linked.sheet.getSprite(frame, rowdir)
 
-        this.graphics.use(this.linked.sheet.getSprite(frame, rowdir)
-    )
+        this.graphics.use(this.linked.sheet.getSprite(frame, rowdir))
+        
 
     }
 
@@ -66,22 +68,22 @@ export class ViewObject extends Actor {
         let toObj = this.linked.pos.sub(this.PLAYER.pos)
         let angleToObj = Math.atan2(toObj.y, toObj.x)
 
-        let relative = this.normalizeAngle(angleToObj - this.PLAYER.dir)
+        let relative = this.normalizeAngle(angleToObj - this.PLAYER.rotation)
 
         this.pos.x = (relative / this.FOV + 0.5) * 1280
         
         let dist = toObj.magnitude
         let scalar = 1 / (dist + 0.0001)
+        scalar = scalar * 15.5
         this.scale.x = scalar
         this.scale.y = scalar
 
         this.pos.y = (720 / 2) - (this.linked.vertical / (dist + 0.0001))
 
-        console.log(this.pos)
     }
 
     normalizeAngle(dir) {
        let  temp = toRadians(dir)
-        return(Math.atan2(Math.sin(temp), Math.cos(temp)))
+        return(Math.atan2(Math.sin(dir), Math.cos(dir)))
     }
 }

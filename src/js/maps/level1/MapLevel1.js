@@ -1,16 +1,17 @@
-import { Scene, Canvas, Actor, CollisionType } from 'excalibur'
+import { Scene, Canvas, Actor, CollisionType, Vector } from 'excalibur'
 import wallTextureUrl from './assets/walls/wall1.png'
 import treewallTextureUrl from './assets/walls/treewall.png'
 import doorTextureUrl from './assets/walls/door.png'
 import { Player } from '../../player.js'
+import { RenderObject } from '../../renderBase/renderbase.js'
 
 // . = floor, # = wall, T = treewall, D = door
 export const MAP = [
     '####################',
     '#..................#',
-    '#.##..#.TTT.#.#.##.#',
-    '#.#.........#..#.#.#',
-    '#.#.####..#.TTTT.#.#',
+    '#.##..#.....#.#.##.#',
+    '#.#0........#..#.#.#',
+    '#.#....0....TTTT.#.#',
     '#..................D',
     '#.#.TTTT.#.#.####..#',
     '#.#.........#.#..#.#',
@@ -42,6 +43,11 @@ export class MapLevel1 extends Scene {
                         collisionType: CollisionType.Fixed,
                     })
                     this.add(wall)
+                }
+
+                if (MAP[y][x] === '0') {
+                    const obj = new RenderObject(new Vector(x, y), 90, this.player)
+                    this.add(obj)
                 }
             }
         }
