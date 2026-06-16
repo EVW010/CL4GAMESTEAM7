@@ -1,12 +1,14 @@
 import { Actor, Engine, Vector, DisplayMode, Keys } from "excalibur"
 import { Resources } from './resources.js'
-
+import { BurnerWeapon } from './burner-weapon.js'
 
 export class Player extends Actor {
 
     game;
     movementSpeed = 0.75;
     rotationSpeed = 0.045;
+    selectedWeapon = 1;
+    burnerWeaponProgress = 0;
     hp;
 
     constructor() {
@@ -17,6 +19,7 @@ export class Player extends Actor {
         this.game = engine;
         this.pos = new Vector(1.5, 1.5);
         this.rotation = 0;
+        this.addChild(new BurnerWeapon());
     }
 
     onPreUpdate(engine) {
