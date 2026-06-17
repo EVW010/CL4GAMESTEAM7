@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 * {
     box-sizing: border-box;
 }
@@ -6,7 +8,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #111;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Press Start 2P", "Courier New", monospace;
     overflow: hidden;
 }
 
@@ -15,13 +17,51 @@ canvas {
     image-rendering: pixelated;
 }
 
+/* ALGEMEEN */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+
+    border: 3px solid #000;
+    border-radius: 0;
+
+    background-color: #ffcc33;
+    color: #111;
+
+    font-family: "Press Start 2P", "Courier New", monospace;
+    font-size: 11px;
+    line-height: 1.5;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ffe066;
+}
+
+.secondary-button {
+    background-color: #222;
+    color: white;
+    border: 3px solid white;
+}
+
+.secondary-button:hover {
+    background-color: white;
+    color: #111;
+}
+
+.hidden {
+    display: none;
+}
+
 /* START SCREEN */
 .start-screen {
     position: fixed;
     inset: 0;
     z-index: 100;
 
-    background-image: url('../../public/images/titleScreenBackground.png');
+    background-image: url('/images/titleScreenBackground.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -29,14 +69,15 @@ canvas {
     display: flex;
     justify-content: center;
     align-items: center;
+
     color: white;
 }
 
-.start-overlay {
+.start-screen::before {
+    content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 1;
+    background: rgba(0, 0, 0, 0.55);
 }
 
 .start-card {
@@ -45,99 +86,116 @@ canvas {
 
     width: 90%;
     max-width: 520px;
-    padding: 35px;
-    background-color: rgba(0, 0, 0, 0.72);
-    border: 2px solid rgba(255, 255, 255, 0.85);
-    border-radius: 18px;
+    padding: 30px;
+
+    background-color: rgba(0, 0, 0, 0.82);
+    border: 4px solid white;
+    border-radius: 0;
+
     text-align: center;
+}
+
+.game-label {
+    margin: 0 0 14px;
+
+    font-size: 10px;
+    line-height: 1.6;
+
+    color: #66ccff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .start-card h1 {
     margin: 0 0 20px;
-    font-size: 46px;
+
+    font-size: 28px;
+    line-height: 1.4;
+
     text-transform: uppercase;
     color: #ffcc33;
-    text-shadow: 0 0 10px black;
+    text-shadow: 3px 3px 0 #000;
 }
 
+.game-synopsis,
 .synopsis {
-    font-size: 17px;
-    line-height: 1.5;
-    margin-bottom: 25px;
+    font-size: 11px;
+    line-height: 1.8;
+
+    margin-bottom: 22px;
+
     color: #eeeeee;
 }
 
-button {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
-    border: none;
-    border-radius: 10px;
-    background-color: #ffcc33;
-    color: #111;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
+.button-group {
+    display: flex;
+    flex-direction: column;
 }
 
-button:hover {
-    background-color: #ffd966;
-}
-
-.secondary-button {
-    background-color: transparent;
-    color: white;
-    border: 2px solid white;
-}
-
-.secondary-button:hover {
-    background-color: white;
-    color: #111;
-}
-
+.controls-text,
 .controls-box {
     margin-top: 15px;
-    padding: 15px;
-    background-color: rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
+    padding: 12px;
+
+    background-color: #111;
+    border: 3px solid white;
+
     text-align: left;
 }
 
-.hidden {
-    display: none;
+.controls-text p,
+.controls-box p {
+    margin: 8px 0;
+
+    font-size: 10px;
+    line-height: 1.7;
+
+    color: white;
 }
 
+.enter-text,
 .small-text {
-    margin-top: 18px;
-    font-size: 14px;
-    color: #bbbbbb;
+    margin-top: 16px;
+
+    font-size: 9px;
+    line-height: 1.6;
+
+    color: #66ff66;
 }
 
-/* GAME OVER SCREEN */
+/* GAME OVER + WIN SCREEN */
 .end-screen {
     position: fixed;
     inset: 0;
-    z-index: 100;
+    z-index: 99999;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
     color: white;
 }
 
 .game-over-screen {
-    background-image: url('../../public/images/gameOverBackground.png');
+    background-image: url('/images/gameOverBackground.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
 
-.game-over-screen::before {
+.win-screen {
+    background-image: url('/images/winBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.end-screen::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 1;
+
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .end-card {
@@ -146,54 +204,69 @@ button:hover {
 
     width: 90%;
     max-width: 520px;
-    padding: 35px;
+    padding: 30px;
+
+    background-color: rgba(0, 0, 0, 0.82);
+    border: 4px solid white;
+    border-radius: 0;
+
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.75);
-    border: 2px solid white;
-    border-radius: 18px;
 }
 
 .end-card h1 {
     margin: 0 0 20px;
-    font-size: 56px;
+
+    font-size: 30px;
+    line-height: 1.4;
+
     text-transform: uppercase;
+    text-shadow: 3px 3px 0 #000;
 }
 
 .game-over-screen h1 {
-    color: #ff4d4d;
+    color: #ff3333;
+}
+
+.win-screen h1 {
+    color: #66ff66;
 }
 
 .end-card p {
-    font-size: 18px;
-    line-height: 1.5;
-    color: #dddddd;
-    margin-bottom: 25px;
+    font-size: 11px;
+    line-height: 1.8;
+
+    color: #eeeeee;
+    margin-bottom: 22px;
 }
 
-.end-card button {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
-    border: none;
-    border-radius: 10px;
-    background-color: #ffcc33;
-    color: #111;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-}
+/* MOBIEL */
+@media (max-width: 600px) {
+    .start-card,
+    .end-card {
+        width: 92%;
+        padding: 22px;
+    }
 
-.end-card button:hover {
-    background-color: #ffd966;
-}
+    .start-card h1 {
+        font-size: 20px;
+    }
 
-.end-card .secondary-button {
-    background-color: transparent;
-    color: white;
-    border: 2px solid white;
-}
+    .end-card h1 {
+        font-size: 22px;
+    }
 
-.end-card .secondary-button:hover {
-    background-color: white;
-    color: #111;
+    .game-label {
+        font-size: 8px;
+    }
+
+    .game-synopsis,
+    .synopsis,
+    .end-card p {
+        font-size: 9px;
+    }
+
+    button {
+        font-size: 9px;
+        padding: 10px;
+    }
 }
