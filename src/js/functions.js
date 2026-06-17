@@ -28,11 +28,11 @@ export function vectorDiff(from, to) { // gets vector, probably no use but it ex
 export function getQuadFacing(dir) {
     let slice = (Math.PI * 2) / 4
     let temp = toRadians(dir)
-    return Math.round(temp / slice) & 3
+    return Math.round(dir / slice) & 3
 }
 
 export function getOctFacing(dir) { // gets octagonal facing based on angle from topdown perspective
     let slice = (Math.PI * 2) / 8
     let temp = toRadians(dir)
-    return Math.round(temp / slice) & 7
+    return Math.round(dir / slice) & 7
 }

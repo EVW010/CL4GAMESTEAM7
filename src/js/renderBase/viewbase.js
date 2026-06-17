@@ -1,4 +1,4 @@
-import { Actor, Vector, SpriteSheet, Sprite, toRadians } from 'excalibur'
+import { Actor, Vector, SpriteSheet, Sprite, toRadians, toDegrees } from 'excalibur'
 import { RenderObject } from './renderbase'
 import { getQuadFacing, getOctFacing, addAngle} from '../functions'
 
@@ -17,7 +17,6 @@ export class ViewObject extends Actor {
     }
 
     onInitialize(engine) {
-        console.log(this.linked.test)
     }
 
     onPreUpdate(engine) {
@@ -28,6 +27,8 @@ export class ViewObject extends Actor {
 
     animate() {
 
+        let toObj = this.linked.pos.sub(this.PLAYER.pos)
+
         if(this.linked.sheet === this.sheet) {
             this.animTime = 0
             this.sheet = this.linked.sheet
@@ -37,14 +38,17 @@ export class ViewObject extends Actor {
 
         let frame = Math.floor(this.animTime / this.frameDuration) % this.totalFrames
 
-        let playerDir = this.PLAYER.dir
+        let playerDir = this.PLAYER.rotation
+        
+        let rowdir = this.getRow(addAngle(Math.atan2(toObj.y, toObj.x), this.linked.dir))
 
-        let rowdir = this.getRow(addAngle(playerDir, this.linked.dir))
+        console.log(playerDir, this.linked.dir)
+
 
         let sprite = this.linked.sheet.getSprite(frame, rowdir)
 
-        this.graphics.use(this.linked.sheet.getSprite(frame, rowdir)
-    )
+        this.graphics.use(this.linked.sheet.getSprite(frame, rowdir))
+        
 
     }
 
@@ -66,22 +70,25 @@ export class ViewObject extends Actor {
         let toObj = this.linked.pos.sub(this.PLAYER.pos)
         let angleToObj = Math.atan2(toObj.y, toObj.x)
 
-        let relative = this.normalizeAngle(angleToObj - this.PLAYER.dir)
+        let relative = this.normalizeAngle(angleToObj - this.PLAYER.rotation)
 
         this.pos.x = (relative / this.FOV + 0.5) * 1280
         
         let dist = toObj.magnitude
-        let scalar = 1 / (dist + 0.0001)
+        let scalar = 1 / (dist) // prevent division by 0 in rare cases
+        let sprite = this.linked.sheet.getSprite(0, 0)
+        scalar = scalar / ( sprite.height / 64) // Scale sprite based on size so that the bottom aways aligns with the ground.
+        scalar = scalar * 16.5
         this.scale.x = scalar
         this.scale.y = scalar
+        this.transform.z = scalar
 
-        this.pos.y = (720 / 2) - (this.linked.vertical / (dist + 0.0001))
+        this.pos.y = ((364) - (this.linked.vertical * 100.6 / (dist))) - 14.5
 
-        console.log(this.pos)
     }
 
     normalizeAngle(dir) {
-       let  temp = toRadians(dir)
-        return(Math.atan2(Math.sin(temp), Math.cos(temp)))
+        let  temp = toRadians(dir)
+        return(Math.atan2(Math.sin(dir), Math.cos(dir)))
     }
 }
