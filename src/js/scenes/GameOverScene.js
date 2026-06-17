@@ -20,8 +20,7 @@ export class GameOverScene extends Scene {
                 <h1>Game Over</h1>
 
                 <p>
-                    Je bent verslagen door de magische bomen.
-                    Het bedrijf rekent op jou, dus probeer het opnieuw.
+                    Je bent verslagen door de magische bomen. Het bedrijf rekent op jou, dus probeer het opnieuw.
                 </p>
 
                 <button id="retry-button">Opnieuw proberen</button>
@@ -31,19 +30,48 @@ export class GameOverScene extends Scene {
 
         document.body.appendChild(this.gameOverScreen)
 
-        this.gameOverScreen.querySelector('#menu-button').addEventListener('click', () => {
-            this.removeGameOverScreen()
-            this.engine.goToScene('start')
+        const retryButton = this.gameOverScreen.querySelector('#retry-button')
+        const menuButton = this.gameOverScreen.querySelector('#menu-button')
+
+        retryButton.addEventListener('click', () => {
+            this.restartGame()
+        })
+
+        menuButton.addEventListener('click', () => {
+            this.backToMenu()
         })
 
         this.keyDownHandler = (event) => {
             if (event.key === 'Enter') {
-                this.removeGameOverScreen()
-                this.engine.goToScene('game')
+                this.restartGame()
+            }
+
+            if (event.key === 'Escape') {
+                this.backToMenu()
             }
         }
 
         window.addEventListener('keydown', this.keyDownHandler)
+    }
+
+    restartGame() {
+        this.removeGameOverScreen()
+
+        if (this.engine.player) {
+            this.engine.player.resetPlayer()
+        }
+
+        this.engine.goToScene('level1')
+    }
+
+    backToMenu() {
+        this.removeGameOverScreen()
+
+        if (this.engine.player) {
+            this.engine.player.resetPlayer()
+        }
+
+        this.engine.goToScene('startScreen')
     }
 
     removeGameOverScreen() {

@@ -1,86 +1,154 @@
-import { Actor, Engine, Vector, DisplayMode, Keys, CollisionType, Shape } from "excalibur"
-import { Resources } from './resources.js'
+import { Actor, Vector, Keys } from "excalibur"
 import { BurnerWeapon } from './burner-weapon.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
 
-    game;
-    movementSpeed = 2;
-    rotationSpeed = 0.045;
-    selectedWeapon = 1;
-    burnerWeaponProgress = 0;
-    oxygenLeven = 100;
-    hp;
+    game
+
+    movementSpeed = 2
+    rotationSpeed = 0.045
+
+    selectedWeapon = 1
+    burnerWeaponProgress = 0
+
+    hp = 100
+    maxHp = 100
+
+    oxygenLeven = 100
+    maxOxygenLeven = 100
+
+    isDead = false
 
     constructor() {
-        super({width:0.8, height:0.8});
+        super({
+            width: 0.8,
+            height: 0.8
+        })
     }
 
     onInitialize(engine) {
-        this.game = engine;
-        this.pos = new Vector(1.5, 1.5);
-        this.rotation = 0;
-        this.addChild(new BurnerWeapon());
+        this.game = engine
+
+        this.resetPlayer()
+
+        this.addChild(new BurnerWeapon())
+    }
+
+    resetPlayer() {
+        this.pos = new Vector(1.5, 1.5)
+        this.rotation = 0
+
+        this.hp = this.maxHp
+        this.oxygenLeven = this.maxOxygenLeven
+
+        this.burnerWeaponProgress = 0
+        this.selectedWeapon = 1
+
+        this.isDead = false
+        this.vel = new Vector(0, 0)
     }
 
     isWall(x, y) {
         return isWallTile(MAP[Math.floor(y)]?.[Math.floor(x)])
     }
 
+    die(engine) {
+        if (this.isDead) return
+
+        this.isDead = true
+        this.hp = 0
+        this.vel = new Vector(0, 0)
+
+        engine.goToScene('gameOverScreen')
+    }
+
     onPreUpdate(engine, delta) {
-        //rotation
+        if (this.isDead) return
+
+        // Rotatie
         if (engine.input.keyboard.isHeld(Keys.Left)) {
-            this.rotation -= this.rotationSpeed;
-        }
-        if (engine.input.keyboard.isHeld(Keys.Right)) {
-            this.rotation += this.rotationSpeed;
+            this.rotation -= this.rotationSpeed
         }
 
-        //movement
-        const dt = delta / 1000;
-        let moveX = 0;
-        let moveY = 0;
+        if (engine.input.keyboard.isHeld(Keys.Right)) {
+            this.rotation += this.rotationSpeed
+        }
+
+        // Beweging
+        const dt = delta / 1000
+
+        let moveX = 0
+        let moveY = 0
 
         if (engine.input.keyboard.isHeld(Keys.A)) {
-            moveX += Math.sin(this.rotation) * this.movementSpeed * dt;
-            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt;
-        }
-        if (engine.input.keyboard.isHeld(Keys.D)) {
-            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt;
-            moveY += Math.cos(this.rotation) * this.movementSpeed * dt;
-        }
-        if (engine.input.keyboard.isHeld(Keys.W)) {
-            moveX += Math.cos(this.rotation) * this.movementSpeed * dt;
-            moveY += Math.sin(this.rotation) * this.movementSpeed * dt;
-        }
-        if (engine.input.keyboard.isHeld(Keys.S)) {
-            moveX -= Math.cos(this.rotation) * this.movementSpeed * dt;
-            moveY -= Math.sin(this.rotation) * this.movementSpeed * dt;
+            moveX += Math.sin(this.rotation) * this.movementSpeed * dt
+            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt
         }
 
-        //handicaps
+        if (engine.input.keyboard.isHeld(Keys.D)) {
+            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt
+            moveY += Math.cos(this.rotation) * this.movementSpeed * dt
+        }
+
+        if (engine.input.keyboard.isHeld(Keys.W)) {
+            moveX += Math.cos(this.rotation) * this.movementSpeed * dt
+            moveY += Math.sin(this.rotation) * this.movementSpeed * dt
+        }
+
+        if (engine.input.keyboard.isHeld(Keys.S)) {
+            moveX -= Math.cos(this.rotation) * this.movementSpeed * dt
+            moveY -= Math.sin(this.rotation) * this.movementSpeed * dt
+        }
+
+        // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
+        let oxygenDrain = 0
+
         for (let i = 1; i <= 10; i++) {
-            if (this.burnerWeaponProgress >= i*10 && this.oxygenLeven > 0) {
-                this.oxygenLeven -= 0.02;
+            if (this.burnerWeaponProgress >= i * 10) {
+                oxygenDrain += 0.02
             }
         }
-        if (this.oxygenLeven <= 0) {
-            this.hp -= 0.1;
+
+        if (oxygenDrain > 0 && this.oxygenLeven > 0) {
+            this.oxygenLeven = Math.max(0, this.oxygenLeven - oxygenDrain)
         }
-        console.log(this.oxygenLeven);
-      
-        const margin = 0.15;
 
-        // Prevent player from moving into walls
-        const xEdge = this.pos.x + moveX + Math.sign(moveX) * margin;
-        if (this.isWall(xEdge, this.pos.y + margin) || this.isWall(xEdge, this.pos.y - margin)) moveX = 0;
+        // Als oxygen op is, gaat HP omlaag
+        if (this.oxygenLeven <= 0) {
+            this.hp = Math.max(0, this.hp - 0.1)
+        }
 
-        const yEdge = this.pos.y + moveY + Math.sign(moveY) * margin;
-        if (this.isWall(this.pos.x + margin, yEdge) || this.isWall(this.pos.x - margin, yEdge)) moveY = 0;
+        // Als HP leeg is, naar Game Over
+        if (this.hp <= 0) {
+            this.die(engine)
+            return
+        }
 
-        this.pos.x += moveX;
-        this.pos.y += moveY;
-        this.vel = new Vector(0, 0);
+        // Botsing met muren
+        const margin = 0.15
+
+        const xEdge = this.pos.x + moveX + Math.sign(moveX) * margin
+
+        if (
+            this.isWall(xEdge, this.pos.y + margin) ||
+            this.isWall(xEdge, this.pos.y - margin)
+        ) {
+            moveX = 0
+        }
+
+        const yEdge = this.pos.y + moveY + Math.sign(moveY) * margin
+
+        if (
+            this.isWall(this.pos.x + margin, yEdge) ||
+            this.isWall(this.pos.x - margin, yEdge)
+        ) {
+            moveY = 0
+        }
+
+        this.pos.x += moveX
+        this.pos.y += moveY
+
+        this.vel = new Vector(0, 0)
     }
 }
