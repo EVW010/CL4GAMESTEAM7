@@ -43,7 +43,7 @@ export class ViewObject extends Actor {
 
         let playerDir = this.PLAYER.rotation
         
-        this.rowDir = this.getRow(addAngle(Math.atan2(toObj.y, toObj.x), this.linked.dir))
+        this.rowDir = this.getRow(addAngle(toDegrees(Math.atan2(toObj.y, toObj.x)), this.linked.dir))
 
         let sprite = this.linked.sheet.getSprite(frame, this.rowDir)
 

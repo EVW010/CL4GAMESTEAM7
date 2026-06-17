@@ -18,7 +18,7 @@ export class Bullet extends RenderObject {
         this.damage = damage;
         this.pos.x += Math.cos(this.rotation)*this.movementSpeed*50;
         this.pos.y += Math.sin(this.rotation)*this.movementSpeed*50;
-        this.dir = addAngle(toDegrees(player.rotation), 0)
+        this.dir = -this.dir + 180;
     }
 
     onPreUpdate(engine) {
