@@ -48,17 +48,19 @@ export class UI extends ScreenElement {
         )
 
         // Oxygen bar blauw
-        this.drawBar(
-            ctx,
-            80,
-            75,
-            360,
-            30,
-            this.player.oxygenLeven,
-            this.player.maxOxygenLeven,
-            Resources.BarFillOxygen.image,
-            'O2'
-        )
+        if (this.player.burnerWeaponProgress >= 10) {
+            this.drawBar(
+                ctx,
+                80,
+                75,
+                360,
+                30,
+                this.player.oxygenLeven,
+                this.player.maxOxygenLeven,
+                Resources.BarFillOxygen.image,
+                'O2'
+            )
+        }
     }
 
     drawBar(ctx, x, y, width, height, value, maxValue, fillImage, label) {
