@@ -64,6 +64,7 @@ export class Player extends Actor {
     }
 
     onPreUpdate(engine, delta) {
+
         if (this.isDead) return
 
         // Rotatie

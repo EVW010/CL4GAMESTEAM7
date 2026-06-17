@@ -1,27 +1,24 @@
-import { Actor, Engine, Vector, DisplayMode, Keys } from "excalibur"
+import { Actor, Engine, Vector, DisplayMode, Keys, toDegrees, toRadians } from "excalibur"
 import { Resources } from './resources.js'
+import { RenderObject } from './renderBase/renderbase.js'
+import { addAngle } from "./functions.js";
 
-export class Bullet extends Actor {
+export class Bullet extends RenderObject {
 
     game;
     fromWeapon;
     damage;
-    movementSpeed = 0.85;
+    movementSpeed = 0.0005;
 
-    constructor(rotation, fromWeapon, damage) {
-        super();
+    constructor(pos, rotation, fromWeapon, damage, player) {
+        super(pos, toDegrees(rotation), player);
+        this.pos = pos;
         this.rotation = rotation;
         this.fromWeapon = fromWeapon;
         this.damage = damage;
-    }
-
-    onInitialize(engine) {
-        this.game = engine;
-        if (this.fromWeapon == "burner") {
-            //set sprites
-        } else if (this.fromWeapon == "cans") {
-            //set sprites
-        }
+        this.pos.x += Math.cos(this.rotation)*this.movementSpeed*50;
+        this.pos.y += Math.sin(this.rotation)*this.movementSpeed*50;
+        this.dir = addAngle(toDegrees(player.rotation), 0)
     }
 
     onPreUpdate(engine) {

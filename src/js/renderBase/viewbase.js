@@ -6,7 +6,6 @@ export class ViewObject extends Actor {
     constructor(trackObj) {
         super()
         this.linked = trackObj
-        this.test = 'THIS IS A TEST MESSAGE FOR THE RENDER -> VIEW'
         this.animTime = 0
         this.frameDuration = 100 // ms per frame
         this.totalFrames = 1
@@ -14,6 +13,10 @@ export class ViewObject extends Actor {
         this.PLAYER = this.linked.PLAYER
         this.sheet = ''
         this.FOV = Math.PI / 3 // SET TO CONFIG ONCE MERGED!! <!><!> IMPORTANT
+
+        this.rowDir
+
+        this.tebst
     }
 
     onInitialize(engine) {
@@ -40,14 +43,11 @@ export class ViewObject extends Actor {
 
         let playerDir = this.PLAYER.rotation
         
-        let rowdir = this.getRow(addAngle(Math.atan2(toObj.y, toObj.x), this.linked.dir))
+        this.rowDir = this.getRow(addAngle(Math.atan2(toObj.y, toObj.x), this.linked.dir))
 
-        console.log(playerDir, this.linked.dir)
+        let sprite = this.linked.sheet.getSprite(frame, this.rowDir)
 
-
-        let sprite = this.linked.sheet.getSprite(frame, rowdir)
-
-        this.graphics.use(this.linked.sheet.getSprite(frame, rowdir))
+        this.graphics.use(this.linked.sheet.getSprite(frame, this.rowDir))
         
 
     }

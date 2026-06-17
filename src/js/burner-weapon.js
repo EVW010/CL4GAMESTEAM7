@@ -24,6 +24,7 @@ export class BurnerWeapon extends Actor {
     }
 
     attack() {
-        this.scene.add(new Bullet(this.rotation, "burner", this.damage));
+        console.log("player rotation: " + this.parent.rotation)
+        this.scene.add(new Bullet(this.parent.pos, this.parent.rotation, "burner", this.damage, this.parent));
     }
 }
