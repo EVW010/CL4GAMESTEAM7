@@ -1,9 +1,23 @@
-import { ImageSource, Sound, Resource, Loader, SpriteSheet, Sprite } from 'excalibur'
+import { ImageSource, Loader, SpriteSheet, ImageFiltering } from 'excalibur'
 
-// voeg hier jouw eigen resources toe
 const Resources = {
-    // Sprite: new ImageSource('images/sprite.png')
-    None: new ImageSource('images/PurpleCheckers.png')
+    None: new ImageSource('images/PurpleCheckers.png'),
+
+    BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
+        filtering: ImageFiltering.Pixel
+    }),
+
+    BarBorderHorizontal: new ImageSource('images/ui/bar-border-horizontal.png', {
+        filtering: ImageFiltering.Pixel
+    }),
+
+    BarFillHealth: new ImageSource('images/ui/bar-fill-health.png', {
+        filtering: ImageFiltering.Pixel
+    }),
+
+    BarFillOxygen: new ImageSource('images/ui/bar-fill-oxygen.png', {
+        filtering: ImageFiltering.Pixel
+    })
 }
 
 const Sheets = {
@@ -15,13 +29,11 @@ const Sheets = {
             spriteHeight: 64,
             spriteWidth: 64,
         }
-    }), 
+    }),
 }
 
-
-
-
 const ResourceLoader = new Loader()
+
 for (let res of Object.values(Resources)) {
     ResourceLoader.addResource(res)
 }
