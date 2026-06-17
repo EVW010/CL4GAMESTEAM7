@@ -15,8 +15,8 @@ export class Player extends Actor {
     hp = 100
     maxHp = 100
 
-    oxygenLeven = 100
-    maxOxygenLeven = 100
+    oxygenLevel = 100
+    maxoxygenLevel = 100
 
     isDead = false
 
@@ -40,7 +40,7 @@ export class Player extends Actor {
         this.rotation = 0
 
         this.hp = this.maxHp
-        this.oxygenLeven = this.maxOxygenLeven
+        this.oxygenLevel = this.maxoxygenLevel
 
         this.burnerWeaponProgress = 0
         this.selectedWeapon = 1
@@ -111,12 +111,12 @@ export class Player extends Actor {
             }
         }
 
-        if (oxygenDrain > 0 && this.oxygenLeven > 0) {
-            this.oxygenLeven = Math.max(0, this.oxygenLeven - oxygenDrain)
+        if (oxygenDrain > 0 && this.oxygenLevel > 0) {
+            this.oxygenLevel = Math.max(0, this.oxygenLevel - oxygenDrain)
         }
 
         // Als oxygen op is, gaat HP omlaag
-        if (this.oxygenLeven <= 0) {
+        if (this.oxygenLevel <= 0) {
             this.hp = Math.max(0, this.hp - 0.1)
         }
 
