@@ -27,6 +27,8 @@ export class ViewObject extends Actor {
 
     animate() {
 
+        let toObj = this.linked.pos.sub(this.PLAYER.pos)
+
         if(this.linked.sheet === this.sheet) {
             this.animTime = 0
             this.sheet = this.linked.sheet
@@ -38,7 +40,7 @@ export class ViewObject extends Actor {
 
         let playerDir = this.PLAYER.rotation
         
-        let rowdir = this.getRow(addAngle(playerDir, this.linked.dir))
+        let rowdir = this.getRow(addAngle(Math.atan2(toObj.y, toObj.x), this.linked.dir))
 
         console.log(playerDir, this.linked.dir)
 
@@ -73,10 +75,13 @@ export class ViewObject extends Actor {
         this.pos.x = (relative / this.FOV + 0.5) * 1280
         
         let dist = toObj.magnitude
-        let scalar = 1 / (dist + 0.0001)
+        let scalar = 1 / (dist + 0.0001) // prevent division by 0 in rare cases
+        let sprite = this.linked.sheet.getSprite(0, 0)
+        scalar = scalar / ( sprite.height / 64) 
         scalar = scalar * 15.5
         this.scale.x = scalar
         this.scale.y = scalar
+        this.transform.z = scalar
 
         this.pos.y = (720 / 2) - (this.linked.vertical / (dist + 0.0001))
 
