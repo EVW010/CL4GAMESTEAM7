@@ -8,7 +8,7 @@ export class Bullet extends RenderObject {
     game;
     fromWeapon;
     damage;
-    movementSpeed = 0.0005;
+    movementSpeed = 6;
 
     constructor(pos, rotation, fromWeapon, damage, player) {
         super(pos, toDegrees(rotation), player);
@@ -16,13 +16,20 @@ export class Bullet extends RenderObject {
         this.rotation = rotation;
         this.fromWeapon = fromWeapon;
         this.damage = damage;
-        this.pos.x += Math.cos(this.rotation)*this.movementSpeed*50;
-        this.pos.y += Math.sin(this.rotation)*this.movementSpeed*50;
+        this.pos.x += Math.cos(this.rotation)/2;
+        this.pos.y += Math.sin(this.rotation)/2;
         this.dir = -this.dir + 180;
+
+        this.timer = 0;
     }
 
-    onPreUpdate(engine) {
-        this.vel.x += Math.cos(this.rotation)*this.movementSpeed;
-        this.vel.y += Math.sin(this.rotation)*this.movementSpeed;
+    onPreUpdate(engine, delta) {
+        const dt = delta / 1000;
+        this.pos.x += Math.cos(this.rotation) * this.movementSpeed * dt;
+        this.pos.y += Math.sin(this.rotation) * this.movementSpeed * dt;
+
+        this.timer += 0.1 ;
+        this.vertical = Math.sin(this.timer)/2;
+        console.log(this.vertical);
     }
 }
