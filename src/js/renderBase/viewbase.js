@@ -75,20 +75,20 @@ export class ViewObject extends Actor {
         this.pos.x = (relative / this.FOV + 0.5) * 1280
         
         let dist = toObj.magnitude
-        let scalar = 1 / (dist + 0.0001) // prevent division by 0 in rare cases
+        let scalar = 1 / (dist) // prevent division by 0 in rare cases
         let sprite = this.linked.sheet.getSprite(0, 0)
-        scalar = scalar / ( sprite.height / 64) 
-        scalar = scalar * 15.5
+        scalar = scalar / ( sprite.height / 64) // Scale sprite based on size so that the bottom aways aligns with the ground.
+        scalar = scalar * 16.5
         this.scale.x = scalar
         this.scale.y = scalar
         this.transform.z = scalar
 
-        this.pos.y = (720 / 2) - (this.linked.vertical / (dist + 0.0001))
+        this.pos.y = ((364) - (this.linked.vertical * 100.6 / (dist))) - 14.5
 
     }
 
     normalizeAngle(dir) {
-       let  temp = toRadians(dir)
+        let  temp = toRadians(dir)
         return(Math.atan2(Math.sin(dir), Math.cos(dir)))
     }
 }

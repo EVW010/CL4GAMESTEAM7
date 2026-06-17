@@ -48,6 +48,9 @@ export class MapLevel1 extends Scene {
                 if (MAP[y][x] === '0') {
                     const obj = new RenderObject(new Vector(x, y), 90, this.player)
                     this.add(obj)
+                    const objt = new RenderObject(new Vector(x, y), 180, this.player)
+                    obj.vertical = 10
+                    this.add(objt)
                 }
             }
         }
