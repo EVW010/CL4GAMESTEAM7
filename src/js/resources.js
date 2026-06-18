@@ -1,4 +1,4 @@
-import { ImageSource, Loader, SpriteSheet, ImageFiltering } from 'excalibur'
+import { ImageSource, Loader, SpriteSheet, ImageFiltering, Sound } from 'excalibur'
 
 const Resources = {
     None: new ImageSource('images/PurpleCheckers.png'),
@@ -17,7 +17,11 @@ const Resources = {
 
     BarFillOxygen: new ImageSource('images/ui/bar-fill-oxygen.png', {
         filtering: ImageFiltering.Pixel
-    })
+    }),
+
+    PistolShot: new Sound('sounds/pistol-shot.mp3'),
+    Choking: new Sound('sounds/choking.mp3'),
+    WalkingGrass: new Sound('sounds/walking-grass.mp3')
 }
 
 const Sheets = {

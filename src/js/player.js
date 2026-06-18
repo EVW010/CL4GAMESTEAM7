@@ -1,5 +1,6 @@
 import { Actor, Vector, Keys } from "excalibur"
 import { BurnerWeapon } from './burner-weapon.js'
+import { Resources } from './resources.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
@@ -19,6 +20,9 @@ export class Player extends Actor {
     maxOxygenLeven = 100
 
     isDead = false
+
+    stepSoundTimer = 0
+    chokeSoundTimer = 0
 
     constructor() {
         super({
@@ -47,6 +51,9 @@ export class Player extends Actor {
 
         this.isDead = false
         this.vel = new Vector(0, 0)
+
+        this.stepSoundTimer = 0
+        this.chokeSoundTimer = 0
     }
 
     isWall(x, y) {
@@ -61,6 +68,26 @@ export class Player extends Actor {
         this.vel = new Vector(0, 0)
 
         engine.goToScene('gameOverScreen')
+    }
+
+    playWalkingSound(delta, isMoving) {
+        if (!isMoving) return
+
+        this.stepSoundTimer -= delta
+
+        if (this.stepSoundTimer <= 0) {
+            Resources.WalkingGrass.play(0.25)
+            this.stepSoundTimer = 380
+        }
+    }
+
+    playChokingSound(delta) {
+        this.chokeSoundTimer -= delta
+
+        if (this.chokeSoundTimer <= 0) {
+            Resources.Choking.play(0.45)
+            this.chokeSoundTimer = 1200
+        }
     }
 
     onPreUpdate(engine, delta) {
@@ -114,9 +141,10 @@ export class Player extends Actor {
             this.oxygenLeven = Math.max(0, this.oxygenLeven - oxygenDrain)
         }
 
-        // Als oxygen op is, gaat HP omlaag
+        // Als oxygen op is, gaat HP omlaag + choking sound
         if (this.oxygenLeven <= 0) {
             this.hp = Math.max(0, this.hp - 0.1)
+            this.playChokingSound(delta)
         }
 
         // Als HP leeg is, naar Game Over
@@ -145,6 +173,10 @@ export class Player extends Actor {
         ) {
             moveY = 0
         }
+
+        const isMoving = moveX !== 0 || moveY !== 0
+
+        this.playWalkingSound(delta, isMoving)
 
         this.pos.x += moveX
         this.pos.y += moveY
