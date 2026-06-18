@@ -1,6 +1,6 @@
 import { Actor, Engine, Vector, DisplayMode, Keys, CircleCollider } from "excalibur"
-import { Resources } from './resources.js'
-import {Bullet } from './bullet.js'
+import { Resources } from '../resources.js'
+import {Bullet } from './fire-bullet.js'
 
 export class BurnerWeapon extends Actor {
 
@@ -24,7 +24,6 @@ export class BurnerWeapon extends Actor {
     }
 
     attack() {
-        console.log("player rotation: " + this.parent.rotation)
-        this.scene.add(new Bullet(this.parent.pos, this.parent.rotation, "burner", this.damage, this.parent));
+        this.scene.add(new Bullet(this.parent.pos, this.parent.rotation, this.damage, this.parent));
     }
 }

@@ -1,5 +1,5 @@
 import { Actor, Vector, Keys } from "excalibur"
-import { BurnerWeapon } from './burner-weapon.js'
+import { BurnerWeapon } from './weapons/burner-weapon.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
