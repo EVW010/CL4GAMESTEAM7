@@ -1,11 +1,17 @@
-import { Actor, Vector, Engine } from 'excalibur'
+import { Actor, Vector, Engine, CircleCollider, CollisionType } from 'excalibur'
 import { ViewObject } from './viewbase.js'
 import { toXY, } from '../functions.js'
 import { Sheets } from '../resources.js'
 
 export class RenderObject extends Actor {
-    constructor(spawnerPos, dir, player) {
+    constructor(spawnerPos, dir, player, radius) {
         super()
+
+        this.collider.set(new CircleCollider({
+            radius: radius,
+        }))
+
+        this.body.collisionType = CollisionType.Active
 
         this.PLAYER = player
 
@@ -23,8 +29,6 @@ export class RenderObject extends Actor {
 
 // this.linked.linked.linked.linked.linked.linked.myVariable is a completely valid object
 // goofy ahh coding 
-
-        this.on('collisionstart')
 
     }
 
