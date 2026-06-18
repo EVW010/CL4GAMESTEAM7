@@ -14,7 +14,8 @@ export class RenderObject extends Actor {
         this.sheet = Sheets.None
 
         this.dir = dir
-        this.pos = spawnerPos
+        this.pos.x = spawnerPos.x
+        this.pos.y = spawnerPos.y
 
         this.speed = 0
 
@@ -23,17 +24,12 @@ export class RenderObject extends Actor {
 // this.linked.linked.linked.linked.linked.linked.myVariable is a completely valid object
 // goofy ahh coding 
 
-        console.log('flip flap flobedobledab')
-
-        this.test = 'THIS IS A TEST MESSAGE FOR VIEW -> RENDER'
-
         this.on('collisionstart')
 
     }
 
     onInitialize(engine) {
         this.scene.add(this.linked)
-        console.log(this.linked.test)
     }
 
     onPreUpdate() {

@@ -2,6 +2,7 @@ import { ImageSource, Loader, SpriteSheet, ImageFiltering } from 'excalibur'
 
 const Resources = {
     None: new ImageSource('images/PurpleCheckers.png'),
+    flame_bullet: new ImageSource('images/flame-spritesheet.png'),
 
     BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
         filtering: ImageFiltering.Pixel
@@ -26,6 +27,15 @@ const Sheets = {
         grid: {
             rows: 8,
             columns: 2,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        }
+    }),
+    flame_bullet: SpriteSheet.fromImageSource({
+        image: Resources.flame_bullet,
+        grid: {
+            rows: 1,
+            columns: 6,
             spriteHeight: 64,
             spriteWidth: 64,
         }
