@@ -84,6 +84,7 @@ export class ViewObject extends Actor {
         this.transform.z = scalar
 
         this.pos.y = ((364) - (this.linked.vertical * 100.6 / (dist))) - 14.5
+    
 
     }
 
