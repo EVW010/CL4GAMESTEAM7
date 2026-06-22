@@ -6,24 +6,38 @@ export class BurnerWeapon extends Actor {
 
     game;
     damage = 10;
+    player;
+    inventoryPlacement;
+
+    constructor(player, inventoryPlacement) {
+        super();
+        this.player = player;
+        this.inventoryPlacement = inventoryPlacement;
+    }
 
     onInitialize(engine) {
         this.game = engine;
+        this.graphics.use(Resources.BurnerWeapon.toSprite());
+        this.rotation = 6;
+        this.pos = new Vector(1050, 575);
+        this.scale = new Vector(1.3, 1.3);
     }
 
     onPreUpdate(engine) {
-        if (this.parent.selectedWeapon == 1) {
-            this.rotation = this.parent.rotation;
+        if (this.player.selectedWeapon == this.inventoryPlacement) {
 
             if (engine.input.keyboard.wasPressed(Keys.Space)) {
                 this.attack();
-                this.parent.burnerWeaponProgress++;
+                this.player.burnerWeaponProgress++;
             }
+            
+            this.pos = new Vector(1050 + Math.sin(this.player.pixelsWalked/8)*12, 575 + Math.sin(this.player.pixelsWalked/4)*6);
+        } else {
+            this.pos.y = 2000;
         }
-        
     }
 
     attack() {
-        this.scene.add(new Bullet(this.parent.pos, this.parent.rotation, this.damage, this.parent));
+        this.scene.add(new Bullet(this.player.pos, this.player.rotation, this.damage, this.player));
     }
 }

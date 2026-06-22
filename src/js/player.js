@@ -1,5 +1,4 @@
 import { Actor, Vector, Keys, CollisionType, CircleCollider } from "excalibur"
-import { BurnerWeapon } from './weapons/burner-weapon.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
@@ -17,6 +16,9 @@ export class Player extends Actor {
 
     oxygenLevel = 100
     maxoxygenLevel = 100
+    oxygenDrain = 0;
+
+    pixelsWalked = 0;
 
     isDead = false
 
@@ -38,8 +40,6 @@ export class Player extends Actor {
         this.game = engine
 
         this.resetPlayer()
-
-        this.addChild(new BurnerWeapon())
     }
 
     resetPlayer() {
@@ -85,38 +85,57 @@ export class Player extends Actor {
         let moveX = 0
         let moveY = 0
 
-        if (engine.input.keyboard.isHeld(Keys.A)) {
-            moveX += Math.sin(this.rotation) * this.movementSpeed * dt
-            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt
-        }
-
-        if (engine.input.keyboard.isHeld(Keys.D)) {
-            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt
-            moveY += Math.cos(this.rotation) * this.movementSpeed * dt
-        }
-
         if (engine.input.keyboard.isHeld(Keys.W)) {
             moveX += Math.cos(this.rotation) * this.movementSpeed * dt
             moveY += Math.sin(this.rotation) * this.movementSpeed * dt
+            this.pixelsWalked++;
         }
 
         if (engine.input.keyboard.isHeld(Keys.S)) {
             moveX -= Math.cos(this.rotation) * this.movementSpeed * dt
             moveY -= Math.sin(this.rotation) * this.movementSpeed * dt
+            this.pixelsWalked--;
         }
 
-        // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
-        let oxygenDrain = 0
-
-        for (let i = 1; i <= 10; i++) {
-            if (this.burnerWeaponProgress >= i * 10) {
-                oxygenDrain += 0.02
+        if (engine.input.keyboard.isHeld(Keys.A)) {
+            moveX += Math.sin(this.rotation) * this.movementSpeed * dt
+            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt
+            if (!engine.input.keyboard.isHeld(Keys.S) && !engine.input.keyboard.isHeld(Keys.W)) {
+                this.pixelsWalked++;
             }
         }
 
-        if (oxygenDrain > 0 && this.oxygenLevel > 0) {
-            this.oxygenLevel = Math.max(0, this.oxygenLevel - oxygenDrain)
+        if (engine.input.keyboard.isHeld(Keys.D)) {
+            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt
+            moveY += Math.cos(this.rotation) * this.movementSpeed * dt
+            if (!engine.input.keyboard.isHeld(Keys.S) && !engine.input.keyboard.isHeld(Keys.W)) {
+                this.pixelsWalked++;
+            }
         }
+
+        if (engine.input.keyboard.wasPressed(Keys.ShiftLeft)) {
+            this.selectedWeapon++;
+            if (this.selectedWeapon == 4 && this.burnerWeaponProgress < 10) {
+                this.selectedWeapon++;
+            }
+            if (this.selectedWeapon > 5) {
+                this.selectedWeapon = 1;
+            }
+        }
+
+        // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
+        this.oxygenDrain = 0
+
+        for (let i = 1; i <= 10; i++) {
+            if (this.burnerWeaponProgress >= i * 10) {
+                this.oxygenDrain += 0.02
+            }
+        }
+
+        if (this.oxygenDrain > 0 && this.oxygenLevel > 0) {
+            this.oxygenLevel = Math.max(0, this.oxygenLevel - this.oxygenDrain)
+        }
+        // console.log(this.oxygenLevel, this.oxygenDrain)
 
         // Als oxygen op is, gaat HP omlaag
         if (this.oxygenLevel <= 0) {
