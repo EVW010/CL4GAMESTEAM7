@@ -130,10 +130,32 @@ export class Player extends Actor {
         }
 
         // Botsing met muren
+        const scene = this.game?.currentScene
+
         const isWall = (x, y) => {
-            const scene = this.game?.currentScene
             if (!scene) return false
             return scene.isWallTile(scene.map[Math.floor(y)]?.[Math.floor(x)])
+        }
+
+        const getDoorTransition = (x, y) => {
+            if (!scene) return null
+            const tile = scene.map[Math.floor(y)]?.[Math.floor(x)]
+            return scene.getSceneTransition?.(tile) ?? null
+        }
+
+        // Physics keeps player ~0.2 away from wall tiles, so check with 0.35 reach
+        // to reliably detect door tiles even when physically stopped against them
+        const doorReach = 0.35
+        const transition =
+            getDoorTransition(this.pos.x + doorReach, this.pos.y) ||
+            getDoorTransition(this.pos.x - doorReach, this.pos.y) ||
+            getDoorTransition(this.pos.x, this.pos.y + doorReach) ||
+            getDoorTransition(this.pos.x, this.pos.y - doorReach)
+
+        if (transition) {
+            this.resetPlayer()
+            engine.goToScene(transition)
+            return
         }
 
         const margin = 0.15

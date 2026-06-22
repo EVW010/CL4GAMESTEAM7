@@ -10,13 +10,19 @@ export class MapEngine extends Scene {
         super()
         this.player = player
         this.map = []
+        this.skyColor = 'rgb(0, 204, 255)'
+        this.floorColor = 'rgb(0, 152, 28)'
     }
 
     isWallTile(char) {
         return false
     }
 
-    getTexture(tileType) {
+    getSceneTransition(char) {
+        return null
+    }
+
+    getTexture(tileType, mapX, mapY) {
         return { img: null, loaded: false }
     }
 
@@ -115,13 +121,15 @@ export class MapEngine extends Scene {
             distance: perpDist,
             wallHeight: 1000 / perpDist,
             texX,
-            tileType
+            tileType,
+            mapX,
+            mapY
         }
     }
 
-    drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX, tileType) {
+    drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX, tileType, mapX, mapY) {
         const top = Math.floor(SCREEN_H / 2 - wallHeight / 2)
-        const { img, loaded } = this.getTexture(tileType)
+        const { img, loaded } = this.getTexture(tileType, mapX, mapY)
 
         if (!loaded) {
             const c = Math.floor(180 / (1 + distance / 4))
@@ -153,20 +161,20 @@ export class MapEngine extends Scene {
         const sliceWidth = SCREEN_W / RAYS
         const angleStep = FOV / RAYS
 
-        ctx.fillStyle = 'rgb(0, 204, 255)'
+        ctx.fillStyle = this.skyColor
         ctx.fillRect(0, 0, SCREEN_W, SCREEN_H / 2)
 
-        ctx.fillStyle = 'rgb(0, 152, 28)'
+        ctx.fillStyle = this.floorColor
         ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
 
         if (!this.zBuffer) this.zBuffer = new Array(RAYS).fill(Infinity)
 
         for (let i = 0; i < RAYS; i++) {
             const rayAngle = this.player.rotation - FOV / 2 + i * angleStep
-            const { distance, wallHeight, texX, tileType } = this.castRay(rayAngle)
+            const { distance, wallHeight, texX, tileType, mapX, mapY } = this.castRay(rayAngle)
             this.zBuffer[i] = distance
 
-            this.drawWallSlice(ctx, i, distance, wallHeight, sliceWidth, texX, tileType)
+            this.drawWallSlice(ctx, i, distance, wallHeight, sliceWidth, texX, tileType, mapX, mapY)
         }
 
         this.drawMiniMap(ctx)

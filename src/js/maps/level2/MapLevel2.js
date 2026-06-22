@@ -26,6 +26,8 @@ export class MapLevel2 extends MapEngine {
     constructor(player) {
         super(player)
         this.map = MAP
+        this.skyColor = 'rgb(82, 113, 135)'
+        this.floorColor = 'rgb(0, 152, 28)'
     }
 
     isWallTile(char) {
