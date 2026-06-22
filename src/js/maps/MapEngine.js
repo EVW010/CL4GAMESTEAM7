@@ -159,9 +159,12 @@ export class MapEngine extends Scene {
         ctx.fillStyle = 'rgb(0, 152, 28)'
         ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
 
+        if (!this.zBuffer) this.zBuffer = new Array(RAYS).fill(Infinity)
+
         for (let i = 0; i < RAYS; i++) {
             const rayAngle = this.player.rotation - FOV / 2 + i * angleStep
             const { distance, wallHeight, texX, tileType } = this.castRay(rayAngle)
+            this.zBuffer[i] = distance
 
             this.drawWallSlice(ctx, i, distance, wallHeight, sliceWidth, texX, tileType)
         }
