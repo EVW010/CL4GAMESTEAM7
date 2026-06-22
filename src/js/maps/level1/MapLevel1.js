@@ -5,6 +5,7 @@ import doorTextureUrl from './assets/walls/door.png'
 import { MapEngine } from '../MapEngine.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
+import { WallCollider } from './wall-collider.js'
 
 // . = floor, # = wall, T = treewall, D = door
 export const MAP = [

@@ -55,8 +55,8 @@ export class UI extends ScreenElement {
                 75,
                 360,
                 30,
-                this.player.oxygenLeven,
-                this.player.maxOxygenLeven,
+                this.player.oxygenLevel,
+                this.player.maxoxygenLevel,
                 Resources.BarFillOxygen.image,
                 'O2'
             )
