@@ -2,6 +2,7 @@ import { Actor, Vector, Keys } from "excalibur"
 import { BurnerWeapon } from './burner-weapon.js'
 import { Resources } from './resources.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
+import { arcadeAxisX, arcadeAxisY } from './arcade-controls.js'
 
 export class Player extends Actor {
 
@@ -90,10 +91,17 @@ export class Player extends Actor {
         }
     }
 
+    clampInput(value) {
+        return Math.max(-1, Math.min(1, value))
+    }
+
     onPreUpdate(engine, delta) {
         if (this.isDead) return
 
-        // Rotatie
+        const arcadeX = arcadeAxisX(engine)
+        const arcadeY = arcadeAxisY(engine)
+
+        // Rotatie met toetsenbord of arcade joystick
         if (engine.input.keyboard.isHeld(Keys.Left)) {
             this.rotation -= this.rotationSpeed
         }
@@ -102,33 +110,50 @@ export class Player extends Actor {
             this.rotation += this.rotationSpeed
         }
 
-        // Beweging
+        if (arcadeX !== 0) {
+            this.rotation += arcadeX * this.rotationSpeed
+        }
+
         const dt = delta / 1000
+
+        let forwardInput = 0
+        let strafeInput = 0
+
+        // Toetsenbord controls blijven werken voor testen op laptop
+        if (engine.input.keyboard.isHeld(Keys.W)) {
+            forwardInput += 1
+        }
+
+        if (engine.input.keyboard.isHeld(Keys.S)) {
+            forwardInput -= 1
+        }
+
+        if (engine.input.keyboard.isHeld(Keys.A)) {
+            strafeInput += 1
+        }
+
+        if (engine.input.keyboard.isHeld(Keys.D)) {
+            strafeInput -= 1
+        }
+
+        // Arcade joystick: omhoog/omlaag = vooruit/achteruit
+        forwardInput += -arcadeY
+
+        forwardInput = this.clampInput(forwardInput)
+        strafeInput = this.clampInput(strafeInput)
 
         let moveX = 0
         let moveY = 0
 
-        if (engine.input.keyboard.isHeld(Keys.A)) {
-            moveX += Math.sin(this.rotation) * this.movementSpeed * dt
-            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt
-        }
+        // Vooruit / achteruit in kijkrichting
+        moveX += Math.cos(this.rotation) * this.movementSpeed * dt * forwardInput
+        moveY += Math.sin(this.rotation) * this.movementSpeed * dt * forwardInput
 
-        if (engine.input.keyboard.isHeld(Keys.D)) {
-            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt
-            moveY += Math.cos(this.rotation) * this.movementSpeed * dt
-        }
+        // Strafen met A en D op toetsenbord
+        moveX += Math.sin(this.rotation) * this.movementSpeed * dt * strafeInput
+        moveY -= Math.cos(this.rotation) * this.movementSpeed * dt * strafeInput
 
-        if (engine.input.keyboard.isHeld(Keys.W)) {
-            moveX += Math.cos(this.rotation) * this.movementSpeed * dt
-            moveY += Math.sin(this.rotation) * this.movementSpeed * dt
-        }
-
-        if (engine.input.keyboard.isHeld(Keys.S)) {
-            moveX -= Math.cos(this.rotation) * this.movementSpeed * dt
-            moveY -= Math.sin(this.rotation) * this.movementSpeed * dt
-        }
-
-        // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
+        // Oxygen gaat omlaag als je veel schiet
         let oxygenDrain = 0
 
         for (let i = 1; i <= 10; i++) {
@@ -141,13 +166,11 @@ export class Player extends Actor {
             this.oxygenLeven = Math.max(0, this.oxygenLeven - oxygenDrain)
         }
 
-        // Als oxygen op is, gaat HP omlaag + choking sound
         if (this.oxygenLeven <= 0) {
             this.hp = Math.max(0, this.hp - 0.1)
             this.playChokingSound(delta)
         }
 
-        // Als HP leeg is, naar Game Over
         if (this.hp <= 0) {
             this.die(engine)
             return

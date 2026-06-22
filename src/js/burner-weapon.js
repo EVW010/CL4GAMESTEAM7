@@ -1,6 +1,7 @@
 import { Actor, Keys } from "excalibur"
 import { Resources } from './resources.js'
 import { Bullet } from './bullet.js'
+import { arcadeButtonPressed, ARCADE_ACTION_BUTTONS } from './arcade-controls.js'
 
 export class BurnerWeapon extends Actor {
 
@@ -15,7 +16,10 @@ export class BurnerWeapon extends Actor {
         if (this.parent.selectedWeapon === 1) {
             this.rotation = this.parent.rotation
 
-            if (engine.input.keyboard.wasPressed(Keys.Space)) {
+            const keyboardShoot = engine.input.keyboard.wasPressed(Keys.Space)
+            const arcadeShoot = arcadeButtonPressed(engine, ARCADE_ACTION_BUTTONS)
+
+            if (keyboardShoot || arcadeShoot) {
                 this.attack()
                 this.parent.burnerWeaponProgress++
             }

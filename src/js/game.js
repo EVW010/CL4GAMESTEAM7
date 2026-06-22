@@ -18,12 +18,26 @@ export class Game extends Engine {
             height: 720,
             maxFps: 60,
             displayMode: DisplayMode.FitScreen,
+            suppressPlayButton: true,
             antialiasing: {
                 filtering: ImageFiltering.Pixel
             }
         })
 
         this.player = new Player()
+        this.mygamepad = null
+
+        this.input.gamepads.enabled = true
+
+        this.input.gamepads.on('connect', (connectEvent) => {
+            console.log('arcade controls gevonden')
+            this.mygamepad = connectEvent.gamepad
+        })
+
+        this.input.gamepads.on('disconnect', () => {
+            console.log('arcade controls losgekoppeld')
+            this.mygamepad = null
+        })
 
         this.start(ResourceLoader).then(() => {
             this.startGame()

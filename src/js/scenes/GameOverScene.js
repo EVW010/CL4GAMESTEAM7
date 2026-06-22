@@ -1,13 +1,56 @@
 import { Scene } from 'excalibur'
+import {
+    arcadeAxisY,
+    arcadeButtonPressed,
+    ARCADE_MENU_BUTTONS,
+    ARCADE_SECONDARY_BUTTONS,
+    ARCADE_BACK_BUTTONS
+} from '../arcade-controls.js'
 
 export class GameOverScene extends Scene {
     onActivate() {
         this.selectedIndex = 0
+        this.moveCooldown = 0
         this.showGameOverScreen()
     }
 
     onDeactivate() {
         this.removeGameOverScreen()
+    }
+
+    onPreUpdate(engine, delta) {
+        if (!this.gameOverScreen || !this.endButtons) return
+
+        this.moveCooldown -= delta
+
+        const arcadeY = arcadeAxisY(engine)
+
+        if (this.moveCooldown <= 0) {
+            if (arcadeY > 0.5) {
+                this.moveDown()
+                this.moveCooldown = 220
+            }
+
+            if (arcadeY < -0.5) {
+                this.moveUp()
+                this.moveCooldown = 220
+            }
+        }
+
+        // Arcade knop / Start knop = geselecteerde optie kiezen
+        if (arcadeButtonPressed(engine, ARCADE_MENU_BUTTONS)) {
+            this.endButtons[this.selectedIndex].click()
+        }
+
+        // Tweede arcade knop = Retry
+        if (arcadeButtonPressed(engine, ARCADE_SECONDARY_BUTTONS)) {
+            this.restartGame()
+        }
+
+        // Back knop = terug naar menu
+        if (arcadeButtonPressed(engine, ARCADE_BACK_BUTTONS)) {
+            this.backToMenu()
+        }
     }
 
     showGameOverScreen() {
@@ -34,7 +77,7 @@ export class GameOverScene extends Scene {
                     <button class="end-option" id="menu-button">Main Menu</button>
                 </div>
 
-                <p class="end-small-text">Enter = kiezen / Escape = menu</p>
+                <p class="end-small-text">Enter / arcade knop = kiezen</p>
             </div>
         `
 
@@ -43,10 +86,14 @@ export class GameOverScene extends Scene {
         this.endButtons = [...this.gameOverScreen.querySelectorAll('.end-option')]
 
         this.gameOverScreen.querySelector('#retry-button').addEventListener('click', () => {
+            this.selectedIndex = 0
+            this.updateSelectedButton()
             this.restartGame()
         })
 
         this.gameOverScreen.querySelector('#menu-button').addEventListener('click', () => {
+            this.selectedIndex = 1
+            this.updateSelectedButton()
             this.backToMenu()
         })
 
@@ -54,38 +101,54 @@ export class GameOverScene extends Scene {
             const key = event.key.toLowerCase()
 
             if (event.key === 'ArrowDown' || key === 's') {
-                this.selectedIndex++
-
-                if (this.selectedIndex >= this.endButtons.length) {
-                    this.selectedIndex = 0
-                }
-
-                this.updateSelectedButton()
+                event.preventDefault()
+                this.moveDown()
             }
 
             if (event.key === 'ArrowUp' || key === 'w') {
-                this.selectedIndex--
-
-                if (this.selectedIndex < 0) {
-                    this.selectedIndex = this.endButtons.length - 1
-                }
-
-                this.updateSelectedButton()
+                event.preventDefault()
+                this.moveUp()
             }
 
             if (event.key === 'Enter') {
+                event.preventDefault()
                 this.endButtons[this.selectedIndex].click()
             }
 
             if (event.key === 'Escape') {
+                event.preventDefault()
                 this.backToMenu()
             }
         }
 
         window.addEventListener('keydown', this.keyDownHandler)
+
+        this.updateSelectedButton()
+    }
+
+    moveDown() {
+        this.selectedIndex++
+
+        if (this.selectedIndex >= this.endButtons.length) {
+            this.selectedIndex = 0
+        }
+
+        this.updateSelectedButton()
+    }
+
+    moveUp() {
+        this.selectedIndex--
+
+        if (this.selectedIndex < 0) {
+            this.selectedIndex = this.endButtons.length - 1
+        }
+
+        this.updateSelectedButton()
     }
 
     updateSelectedButton() {
+        if (!this.endButtons) return
+
         this.endButtons.forEach((button) => {
             button.classList.remove('active')
         })
@@ -123,5 +186,7 @@ export class GameOverScene extends Scene {
             this.gameOverScreen.remove()
             this.gameOverScreen = null
         }
+
+        this.endButtons = null
     }
 }

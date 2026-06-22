@@ -1,13 +1,58 @@
 import { Scene } from 'excalibur'
+import {
+    arcadeAxisY,
+    arcadeButtonPressed,
+    ARCADE_MENU_BUTTONS,
+    ARCADE_SECONDARY_BUTTONS,
+    ARCADE_BACK_BUTTONS
+} from '../arcade-controls.js'
 
 export class StartScene extends Scene {
     onActivate() {
         this.selectedIndex = 0
+        this.moveCooldown = 0
         this.showStartScreen()
     }
 
     onDeactivate() {
         this.removeStartScreen()
+    }
+
+    onPreUpdate(engine, delta) {
+        if (!this.startScreen || !this.menuButtons) return
+
+        this.moveCooldown -= delta
+
+        const arcadeY = arcadeAxisY(engine)
+
+        if (this.moveCooldown <= 0) {
+            if (arcadeY > 0.5) {
+                this.moveDown()
+                this.moveCooldown = 220
+            }
+
+            if (arcadeY < -0.5) {
+                this.moveUp()
+                this.moveCooldown = 220
+            }
+        }
+
+        // Arcade knop / Start knop = geselecteerde optie kiezen
+        if (arcadeButtonPressed(engine, ARCADE_MENU_BUTTONS)) {
+            this.menuButtons[this.selectedIndex].click()
+        }
+
+        // Tweede arcade knop = snel controls openen
+        if (arcadeButtonPressed(engine, ARCADE_SECONDARY_BUTTONS)) {
+            this.selectedIndex = 1
+            this.updateSelectedButton()
+            this.showControls()
+        }
+
+        // Back knop = info sluiten
+        if (arcadeButtonPressed(engine, ARCADE_BACK_BUTTONS)) {
+            this.infoText?.classList.add('hidden')
+        }
     }
 
     showStartScreen() {
@@ -43,7 +88,7 @@ export class StartScene extends Scene {
                     <p>Escape = terug</p>
                 </div>
 
-                <p class="enter-text">Druk op Enter om te starten</p>
+                <p class="enter-text">Enter / arcade knop = selecteren</p>
             </div>
         `
 
@@ -53,14 +98,20 @@ export class StartScene extends Scene {
         this.menuButtons = [...this.startScreen.querySelectorAll('.menu-option')]
 
         this.startScreen.querySelector('#start-button').addEventListener('click', () => {
+            this.selectedIndex = 0
+            this.updateSelectedButton()
             this.startGame()
         })
 
         this.startScreen.querySelector('#controls-button').addEventListener('click', () => {
+            this.selectedIndex = 1
+            this.updateSelectedButton()
             this.showControls()
         })
 
         this.startScreen.querySelector('#story-button').addEventListener('click', () => {
+            this.selectedIndex = 2
+            this.updateSelectedButton()
             this.showStory()
         })
 
@@ -68,26 +119,17 @@ export class StartScene extends Scene {
             const key = event.key.toLowerCase()
 
             if (event.key === 'ArrowDown' || key === 's') {
-                this.selectedIndex++
-
-                if (this.selectedIndex >= this.menuButtons.length) {
-                    this.selectedIndex = 0
-                }
-
-                this.updateSelectedButton()
+                event.preventDefault()
+                this.moveDown()
             }
 
             if (event.key === 'ArrowUp' || key === 'w') {
-                this.selectedIndex--
-
-                if (this.selectedIndex < 0) {
-                    this.selectedIndex = this.menuButtons.length - 1
-                }
-
-                this.updateSelectedButton()
+                event.preventDefault()
+                this.moveUp()
             }
 
             if (event.key === 'Enter') {
+                event.preventDefault()
                 this.menuButtons[this.selectedIndex].click()
             }
 
@@ -97,9 +139,33 @@ export class StartScene extends Scene {
         }
 
         window.addEventListener('keydown', this.keyDownHandler)
+
+        this.updateSelectedButton()
+    }
+
+    moveDown() {
+        this.selectedIndex++
+
+        if (this.selectedIndex >= this.menuButtons.length) {
+            this.selectedIndex = 0
+        }
+
+        this.updateSelectedButton()
+    }
+
+    moveUp() {
+        this.selectedIndex--
+
+        if (this.selectedIndex < 0) {
+            this.selectedIndex = this.menuButtons.length - 1
+        }
+
+        this.updateSelectedButton()
     }
 
     updateSelectedButton() {
+        if (!this.menuButtons) return
+
         this.menuButtons.forEach((button) => {
             button.classList.remove('active')
         })
@@ -111,12 +177,22 @@ export class StartScene extends Scene {
         this.infoText.classList.remove('hidden')
 
         this.infoText.innerHTML = `
+            <p><strong>Keyboard</strong></p>
             <p>W = vooruit lopen</p>
             <p>S = achteruit lopen</p>
             <p>A / D = links en rechts bewegen</p>
             <p>Pijltjes links/rechts = draaien</p>
             <p>Spatie = schieten</p>
             <p>Escape = terug</p>
+
+            <br>
+
+            <p><strong>Arcade controls</strong></p>
+            <p>Joystick omhoog/omlaag = menu kiezen</p>
+            <p>Arcade knop / Start = selecteren</p>
+            <p>In game: joystick omhoog/omlaag = lopen</p>
+            <p>In game: joystick links/rechts = draaien</p>
+            <p>Arcade knop = schieten</p>
         `
     }
 
@@ -146,5 +222,8 @@ export class StartScene extends Scene {
             this.startScreen.remove()
             this.startScreen = null
         }
+
+        this.infoText = null
+        this.menuButtons = null
     }
 }
