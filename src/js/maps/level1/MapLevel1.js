@@ -66,7 +66,7 @@ export class MapLevel1 extends MapEngine {
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
                 if (this.isWallTile(this.map[y][x])) {
-                    const wall = new Actor({ collisionType: CollisionType.Fixed })
+                    const wall = new WallCollider(new Vector(x, y))
                     this.add(wall)
                 }
 
