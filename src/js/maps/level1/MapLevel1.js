@@ -5,6 +5,7 @@ import doorTextureUrl from './assets/walls/door.png'
 import { Player } from '../../player.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
+import { WallCollider } from './wall-collider.js'
 
 // . = floor, # = wall, T = treewall, D = door
 export const MAP = [
@@ -41,9 +42,7 @@ export class MapLevel1 extends Scene {
         for (let y = 0; y < MAP.length; y++) {
             for (let x = 0; x < MAP[y].length; x++) {
                 if (isWallTile(MAP[y][x])) {
-                    const wall = new Actor({
-                        collisionType: CollisionType.Fixed,
-                    })
+                    const wall = new WallCollider(new Vector(x, y))
 
                     this.add(wall)
                 }

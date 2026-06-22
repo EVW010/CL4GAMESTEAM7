@@ -12,7 +12,7 @@ export class Bullet extends RenderObject {
     movementSpeed = 6;
 
     constructor(pos, rotation, damage, player) {
-        super(pos, toDegrees(rotation), player, 0.15, 0.15);
+        super(pos, toDegrees(rotation), player, 0.15);
         this.pos = pos;
         this.rotation = rotation;
         this.damage = damage;
