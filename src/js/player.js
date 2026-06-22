@@ -1,4 +1,4 @@
-import { Actor, Vector, Keys } from "excalibur"
+import { Actor, Vector, Keys, CollisionType, CircleCollider } from "excalibur"
 import { BurnerWeapon } from './weapons/burner-weapon.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
@@ -25,6 +25,13 @@ export class Player extends Actor {
             width: 0.8,
             height: 0.8
         })
+
+        this.collider.set(new CircleCollider({
+            radius: 0.2
+        }))
+
+        this.body.collisionType = CollisionType.Active
+
     }
 
     onInitialize(engine) {
