@@ -3,6 +3,7 @@ import wallTextureUrl from './assets/walls/wall3.png'
 import { MapEngine } from '../MapEngine.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
+import { WallCollider } from '../level1/wall-collider.js'
 
 // . = floor, # = wall
 export const MAP = [
@@ -49,7 +50,7 @@ export class MapLevel3 extends MapEngine {
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
                 if (this.isWallTile(this.map[y][x])) {
-                    const wall = new Actor({ collisionType: CollisionType.Fixed })
+                    const wall = new WallCollider(new Vector(x, y))
                     this.add(wall)
                 }
 
