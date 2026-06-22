@@ -1,49 +1,42 @@
 import { Actor, CollisionType, Vector } from 'excalibur'
-import wallTextureUrl from './assets/walls/wall1.png'
-import treewallTextureUrl from './assets/walls/treewall.png'
-import doorTextureUrl from './assets/walls/door.png'
+import wallTextureUrl from './assets/walls/wall4.png'
 import { MapEngine } from '../MapEngine.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
-import { WallCollider } from './wall-collider.js'
 
-// . = floor, # = wall, T = treewall, D = door
+// . = floor, # = wall
 export const MAP = [
     '####################',
-    '#..................#',
-    '#.##..#.....#.#.##.#',
-    '#.#0........#..#.#.#',
-    '#.#....0....TTTT.#.#',
-    '#..................D',
-    '#.#.TTTT.#.#.####..#',
-    '#.#.........#.#..#.#',
-    '#.##..#.TTT.#.#.##.#',
-    '#..................#',
+    '#.....#.....#......#',
+    '#.###.#.###.#.###..#',
+    '#...#.......#.#.0..#',
+    '#.###.#####.#.#.##.#',
+    '#.............#....#',
+    '#.###.#####.#.#.##.#',
+    '#...#.......#.#.0..#',
+    '#.###.#.###.#.###..#',
+    '#.....#.....#......#',
     '####################',
 ]
 
-export const isWallTile = (char) => char === '#' || char === 'T' || char === 'D'
+export const isWallTile = (char) => char === '#'
 
-export class MapLevel1 extends MapEngine {
+export class MapLevel4 extends MapEngine {
     constructor(player) {
         super(player)
         this.map = MAP
     }
 
     isWallTile(char) {
-        return char === '#' || char === 'T' || char === 'D'
+        return char === '#'
     }
 
     getMiniMapColor(tile) {
-        if (tile === 'T') return 'rgb(0, 150, 0)'
         if (tile === '#') return 'rgb(150, 0, 150)'
-        if (tile === 'D') return 'rgb(120, 70, 0)'
         return 'rgb(0, 0, 0)'
     }
 
     getTexture(tileType) {
-        if (tileType === 'T') return { img: this.treewallImg, loaded: this.treewallImgLoaded }
-        if (tileType === 'D') return { img: this.doorImg, loaded: this.doorImgLoaded }
         return { img: this.wallImg, loaded: this.wallImgLoaded }
     }
 
@@ -52,16 +45,6 @@ export class MapLevel1 extends MapEngine {
         this.wallImg.src = wallTextureUrl
         this.wallImgLoaded = false
         this.wallImg.onload = () => { this.wallImgLoaded = true }
-
-        this.treewallImg = new Image()
-        this.treewallImg.src = treewallTextureUrl
-        this.treewallImgLoaded = false
-        this.treewallImg.onload = () => { this.treewallImgLoaded = true }
-
-        this.doorImg = new Image()
-        this.doorImg.src = doorTextureUrl
-        this.doorImgLoaded = false
-        this.doorImg.onload = () => { this.doorImgLoaded = true }
 
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {

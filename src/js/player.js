@@ -56,10 +56,6 @@ export class Player extends Actor {
         this.vel = new Vector(0, 0)
     }
 
-    isWall(x, y) {
-        return isWallTile(MAP[Math.floor(y)]?.[Math.floor(x)])
-    }
-
     die(engine) {
         if (this.isDead) return
 
@@ -134,13 +130,19 @@ export class Player extends Actor {
         }
 
         // Botsing met muren
+        const isWall = (x, y) => {
+            const scene = this.game?.currentScene
+            if (!scene) return false
+            return scene.isWallTile(scene.map[Math.floor(y)]?.[Math.floor(x)])
+        }
+
         const margin = 0.15
 
         const xEdge = this.pos.x + moveX + Math.sign(moveX) * margin
 
         if (
-            this.isWall(xEdge, this.pos.y + margin) ||
-            this.isWall(xEdge, this.pos.y - margin)
+            isWall(xEdge, this.pos.y + margin) ||
+            isWall(xEdge, this.pos.y - margin)
         ) {
             moveX = 0
         }
@@ -148,8 +150,8 @@ export class Player extends Actor {
         const yEdge = this.pos.y + moveY + Math.sign(moveY) * margin
 
         if (
-            this.isWall(this.pos.x + margin, yEdge) ||
-            this.isWall(this.pos.x - margin, yEdge)
+            isWall(this.pos.x + margin, yEdge) ||
+            isWall(this.pos.x - margin, yEdge)
         ) {
             moveY = 0
         }

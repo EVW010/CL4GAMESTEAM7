@@ -73,7 +73,7 @@ export class ViewObject extends Actor {
         let relative = this.normalizeAngle(angleToObj - this.PLAYER.rotation)
 
         this.pos.x = (relative / this.FOV + 0.5) * 1280
-        
+
         let dist = toObj.magnitude
         let scalar = 1 / (dist) // prevent division by 0 in rare cases
         let sprite = this.linked.sheet.getSprite(0, 0)
@@ -85,6 +85,12 @@ export class ViewObject extends Actor {
 
         this.pos.y = ((364) - (this.linked.vertical * 100.6 / (dist))) - 14.5
 
+        const RAYS = 200
+        const zBuffer = this.PLAYER.game?.currentScene?.zBuffer
+        if (zBuffer) {
+            const col = Math.max(0, Math.min(RAYS - 1, Math.floor((this.pos.x / 1280) * RAYS)))
+            this.graphics.visible = dist <= zBuffer[col]
+        }
     }
 
     normalizeAngle(dir) {
