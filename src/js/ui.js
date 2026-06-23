@@ -1,5 +1,7 @@
 import { ScreenElement, Vector, Canvas } from 'excalibur'
 import { Resources } from './resources.js'
+import { BurnerWeapon } from './weapons/burner-weapon.js'
+import { OxygenMask } from './weapons/oxygen-mask.js'
 
 const SCREEN_W = 1280
 const SCREEN_H = 720
@@ -28,6 +30,8 @@ export class UI extends ScreenElement {
         })
 
         this.graphics.use(hudCanvas)
+        this.addChild(new BurnerWeapon(this.player, 1));
+        this.addChild(new OxygenMask(this.player, 4));
     }
 
     drawHud(ctx) {
@@ -61,6 +65,9 @@ export class UI extends ScreenElement {
                 'O2'
             )
         }
+
+        //weapons
+
     }
 
     drawBar(ctx, x, y, width, height, value, maxValue, fillImage, label) {

@@ -41,6 +41,6 @@ export class Bullet extends RenderObject {
             this.linked.kill();
             this.kill();
         }
-        console.log(otherObject);
+        // console.log(otherObject);
     }
 }
