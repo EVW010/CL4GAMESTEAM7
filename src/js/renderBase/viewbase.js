@@ -7,7 +7,7 @@ export class ViewObject extends Actor {
         super()
         this.linked = trackObj
         this.animTime = 0
-        this.frameDuration = 100 // ms per frame
+        this.frameDuration = 10 // ms per frame
         this.totalFrames = 1
         this.pos = new Vector(300, 300)
         this.PLAYER = this.linked.PLAYER
@@ -32,10 +32,12 @@ export class ViewObject extends Actor {
 
         let toObj = this.linked.pos.sub(this.PLAYER.pos)
 
-        if(this.linked.sheet === this.sheet) {
+        if(this.linked.sheet !== this.sheet) {
             this.animTime = 0
             this.sheet = this.linked.sheet
         }
+
+        // console.log(this.animTime)
         
         this.totalFrames = this.linked.sheet.columns
 

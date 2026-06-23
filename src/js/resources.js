@@ -4,6 +4,8 @@ const Resources = {
     None: new ImageSource('images/PurpleCheckers.png'),
     flame_bullet: new ImageSource('images/flame-spritesheet.png'),
     Fiend: new ImageSource('images/WasheeWashee.png'),
+    Shrubbery: new ImageSource('images/shrub.png'),
+    MadShrub: new ImageSource('images/shrubattack.png'),
     BurnerWeapon: new ImageSource('images/ui/burner-weapon.png'),
     OxygenMask: new ImageSource('images/ui/oxygen-mask.png'),
 
@@ -51,7 +53,27 @@ const Sheets = {
             spriteHeight: 64,
             spriteWidth: 64
         }
-    })
+    }),
+
+    Shrub: SpriteSheet.fromImageSource({
+        image: Resources.Shrubbery,
+        grid: {
+            rows: 1,
+            columns: 6,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        }
+    }),
+
+    ShrubAttack: SpriteSheet.fromImageSource({
+        image: Resources.MadShrub,
+        grid: {
+            columns: 18,
+            rows: 1,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        },
+    }),
 }
 
 const ResourceLoader = new Loader()

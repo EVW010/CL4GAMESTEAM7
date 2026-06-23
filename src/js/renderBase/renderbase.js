@@ -8,7 +8,7 @@ export class RenderObject extends Actor {
         super()
 
         this.collider.set(new CircleCollider({
-            radius: radius,
+            radius: radius, // this.collider.CircleCollider.radius
         }))
 
         this.body.collisionType = CollisionType.Active
