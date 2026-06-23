@@ -5,14 +5,15 @@ import doorTextureUrl from './assets/walls/door.png'
 import { Player } from '../../player.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
+import { Bush } from '../../enemies/George.js'
 
 // . = floor, # = wall, T = treewall, D = door
 export const MAP = [
     '####################',
     '#..................#',
-    '#.##..#.....#.#.##.#',
-    '#.#0........#..#.#.#',
-    '#.#....0....TTTT.#.#',
+    '#.##..#.....S.#.##.#',
+    '#.#0.............#.#',
+    '#.#....0.....TTT.#.#',
     '#..................D',
     '#.#.TTTT.#.#.####..#',
     '#.#.........#.#..#.#',
@@ -54,6 +55,11 @@ export class MapLevel1 extends Scene {
                     const objt = new RenderObject(new Vector(x, y), 180, this.player, 0.3)
                     obj.vertical = 10
                     this.add(objt)
+                }
+
+                if (MAP[y][x] === 'S') {
+                    const obj = new Bush(new Vector(x, y), 90, this.player)
+                    this.add(obj)
                 }
             }
         }
