@@ -6,6 +6,8 @@ const Resources = {
     Fiend: new ImageSource('images/WasheeWashee.png'),
     Shrubbery: new ImageSource('images/shrub.png'),
     MadShrub: new ImageSource('images/shrubattack.png'),
+    BurnerWeapon: new ImageSource('images/ui/burner-weapon.png'),
+    OxygenMask: new ImageSource('images/ui/oxygen-mask.png'),
 
     BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
         filtering: ImageFiltering.Pixel
@@ -21,7 +23,7 @@ const Resources = {
 
     BarFillOxygen: new ImageSource('images/ui/bar-fill-oxygen.png', {
         filtering: ImageFiltering.Pixel
-    })
+    }),
 }
 
 const Sheets = {

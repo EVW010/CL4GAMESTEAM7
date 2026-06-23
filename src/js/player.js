@@ -1,5 +1,4 @@
 import { Actor, Vector, Keys, CollisionType, CircleCollider } from "excalibur"
-import { BurnerWeapon } from './weapons/burner-weapon.js'
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
 
 export class Player extends Actor {
@@ -17,6 +16,9 @@ export class Player extends Actor {
 
     oxygenLevel = 100
     maxoxygenLevel = 100
+    oxygenDrain = 0;
+
+    pixelsWalked = 0;
 
     isDead = false
 
@@ -38,8 +40,6 @@ export class Player extends Actor {
         this.game = engine
 
         this.resetPlayer()
-
-        this.addChild(new BurnerWeapon())
     }
 
     resetPlayer() {
@@ -54,10 +54,6 @@ export class Player extends Actor {
 
         this.isDead = false
         this.vel = new Vector(0, 0)
-    }
-
-    isWall(x, y) {
-        return isWallTile(MAP[Math.floor(y)]?.[Math.floor(x)])
     }
 
     die(engine) {
@@ -89,38 +85,57 @@ export class Player extends Actor {
         let moveX = 0
         let moveY = 0
 
-        if (engine.input.keyboard.isHeld(Keys.A)) {
-            moveX += Math.sin(this.rotation) * this.movementSpeed * dt
-            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt
-        }
-
-        if (engine.input.keyboard.isHeld(Keys.D)) {
-            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt
-            moveY += Math.cos(this.rotation) * this.movementSpeed * dt
-        }
-
         if (engine.input.keyboard.isHeld(Keys.W)) {
             moveX += Math.cos(this.rotation) * this.movementSpeed * dt
             moveY += Math.sin(this.rotation) * this.movementSpeed * dt
+            this.pixelsWalked++;
         }
 
         if (engine.input.keyboard.isHeld(Keys.S)) {
             moveX -= Math.cos(this.rotation) * this.movementSpeed * dt
             moveY -= Math.sin(this.rotation) * this.movementSpeed * dt
+            this.pixelsWalked--;
         }
 
-        // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
-        let oxygenDrain = 0
-
-        for (let i = 1; i <= 10; i++) {
-            if (this.burnerWeaponProgress >= i * 10) {
-                oxygenDrain += 0.02
+        if (engine.input.keyboard.isHeld(Keys.A)) {
+            moveX += Math.sin(this.rotation) * this.movementSpeed * dt
+            moveY -= Math.cos(this.rotation) * this.movementSpeed * dt
+            if (!engine.input.keyboard.isHeld(Keys.S) && !engine.input.keyboard.isHeld(Keys.W)) {
+                this.pixelsWalked++;
             }
         }
 
-        if (oxygenDrain > 0 && this.oxygenLevel > 0) {
-            this.oxygenLevel = Math.max(0, this.oxygenLevel - oxygenDrain)
+        if (engine.input.keyboard.isHeld(Keys.D)) {
+            moveX -= Math.sin(this.rotation) * this.movementSpeed * dt
+            moveY += Math.cos(this.rotation) * this.movementSpeed * dt
+            if (!engine.input.keyboard.isHeld(Keys.S) && !engine.input.keyboard.isHeld(Keys.W)) {
+                this.pixelsWalked++;
+            }
         }
+
+        if (engine.input.keyboard.wasPressed(Keys.ShiftLeft)) {
+            this.selectedWeapon++;
+            if (this.selectedWeapon == 4 && this.burnerWeaponProgress < 10) {
+                this.selectedWeapon++;
+            }
+            if (this.selectedWeapon > 5) {
+                this.selectedWeapon = 1;
+            }
+        }
+
+        // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
+        this.oxygenDrain = 0
+
+        for (let i = 1; i <= 10; i++) {
+            if (this.burnerWeaponProgress >= i * 10) {
+                this.oxygenDrain += 0.02
+            }
+        }
+
+        if (this.oxygenDrain > 0 && this.oxygenLevel > 0) {
+            this.oxygenLevel = Math.max(0, this.oxygenLevel - this.oxygenDrain)
+        }
+        // console.log(this.oxygenLevel, this.oxygenDrain)
 
         // Als oxygen op is, gaat HP omlaag
         if (this.oxygenLevel <= 0) {
@@ -134,13 +149,41 @@ export class Player extends Actor {
         }
 
         // Botsing met muren
+        const scene = this.game?.currentScene
+
+        const isWall = (x, y) => {
+            if (!scene) return false
+            return scene.isWallTile(scene.map[Math.floor(y)]?.[Math.floor(x)])
+        }
+
+        const getDoorTransition = (x, y) => {
+            if (!scene) return null
+            const tile = scene.map[Math.floor(y)]?.[Math.floor(x)]
+            return scene.getSceneTransition?.(tile) ?? null
+        }
+
+        // Physics keeps player ~0.2 away from wall tiles, so check with 0.35 reach
+        // to reliably detect door tiles even when physically stopped against them
+        const doorReach = 0.35
+        const transition =
+            getDoorTransition(this.pos.x + doorReach, this.pos.y) ||
+            getDoorTransition(this.pos.x - doorReach, this.pos.y) ||
+            getDoorTransition(this.pos.x, this.pos.y + doorReach) ||
+            getDoorTransition(this.pos.x, this.pos.y - doorReach)
+
+        if (transition) {
+            this.resetPlayer()
+            engine.goToScene(transition)
+            return
+        }
+
         const margin = 0.15
 
         const xEdge = this.pos.x + moveX + Math.sign(moveX) * margin
 
         if (
-            this.isWall(xEdge, this.pos.y + margin) ||
-            this.isWall(xEdge, this.pos.y - margin)
+            isWall(xEdge, this.pos.y + margin) ||
+            isWall(xEdge, this.pos.y - margin)
         ) {
             moveX = 0
         }
@@ -148,8 +191,8 @@ export class Player extends Actor {
         const yEdge = this.pos.y + moveY + Math.sign(moveY) * margin
 
         if (
-            this.isWall(this.pos.x + margin, yEdge) ||
-            this.isWall(this.pos.x - margin, yEdge)
+            isWall(this.pos.x + margin, yEdge) ||
+            isWall(this.pos.x - margin, yEdge)
         ) {
             moveY = 0
         }

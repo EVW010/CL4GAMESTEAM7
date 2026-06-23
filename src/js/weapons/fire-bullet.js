@@ -2,6 +2,7 @@ import { Actor, Engine, Vector, DisplayMode, Keys, toDegrees, toRadians } from "
 import { Sheets } from '../resources.js'
 import { RenderObject } from '../renderBase/renderbase.js'
 import { addAngle } from "../functions.js";
+import { WallCollider } from "../maps/level1/wall-collider.js";
 
 export class Bullet extends RenderObject {
 
@@ -11,7 +12,7 @@ export class Bullet extends RenderObject {
     movementSpeed = 6;
 
     constructor(pos, rotation, damage, player) {
-        super(pos, toDegrees(rotation), player);
+        super(pos, toDegrees(rotation), player, 0.15);
         this.pos = pos;
         this.rotation = rotation;
         this.damage = damage;
@@ -36,6 +37,10 @@ export class Bullet extends RenderObject {
 
     collide(event) {
         const otherObject = event.other.owner;
-        console.log(event);
+        if (otherObject instanceof WallCollider) {
+            this.linked.kill();
+            this.kill();
+        }
+        // console.log(otherObject);
     }
 }
