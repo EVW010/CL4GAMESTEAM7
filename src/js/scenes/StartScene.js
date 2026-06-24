@@ -37,19 +37,16 @@ export class StartScene extends Scene {
             }
         }
 
-        // Arcade knop / Start knop = geselecteerde optie kiezen
         if (arcadeButtonPressed(engine, ARCADE_MENU_BUTTONS)) {
             this.menuButtons[this.selectedIndex].click()
         }
 
-        // Tweede arcade knop = snel controls openen
         if (arcadeButtonPressed(engine, ARCADE_SECONDARY_BUTTONS)) {
             this.selectedIndex = 1
             this.updateSelectedButton()
             this.showControls()
         }
 
-        // Back knop = info sluiten
         if (arcadeButtonPressed(engine, ARCADE_BACK_BUTTONS)) {
             this.infoText?.classList.add('hidden')
         }
@@ -77,6 +74,7 @@ export class StartScene extends Scene {
                     <button class="menu-option active" id="start-button">Start Game</button>
                     <button class="menu-option" id="controls-button">Controls</button>
                     <button class="menu-option" id="story-button">Story</button>
+                    <button class="menu-option" id="weapons-button">Weapons</button>
                 </div>
 
                 <div id="info-text" class="info-text hidden">
@@ -113,6 +111,12 @@ export class StartScene extends Scene {
             this.selectedIndex = 2
             this.updateSelectedButton()
             this.showStory()
+        })
+
+        this.startScreen.querySelector('#weapons-button').addEventListener('click', () => {
+            this.selectedIndex = 3
+            this.updateSelectedButton()
+            this.openWeaponsScreen()
         })
 
         this.keyDownHandler = (event) => {
@@ -205,6 +209,11 @@ export class StartScene extends Scene {
             <p>Tijdens je werk kom je terecht in een magisch bos.</p>
             <p>Overleef, vecht terug en probeer te ontsnappen.</p>
         `
+    }
+
+    openWeaponsScreen() {
+        this.removeStartScreen()
+        this.engine.goToScene('weapons')
     }
 
     startGame() {
