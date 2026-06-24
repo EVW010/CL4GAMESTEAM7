@@ -6,8 +6,6 @@ export class Bush extends EnemyBase {
     constructor(spawnerPos, dir, player) {
         super(spawnerPos, dir, player, 0.2, 7)
 
-        this.attackTimer = 0
-
     }
 
     onPreUpdate() {
@@ -28,7 +26,7 @@ export class Bush extends EnemyBase {
     state1() {
         let distvect = this.pos.sub(this.PLAYER.pos)
         let dist = (distvect.x * distvect.x) + (distvect.y * distvect.y)
-        if(dist < 9) {
+        if(dist < 9 && this.checkLOS()) {
             this.state = 2
             console.log('AWOKEN')
             this.sheet = Sheets.Shrub
@@ -36,8 +34,16 @@ export class Bush extends EnemyBase {
     }
 /*  */
     state2() {
-        this.TGT.y = this.PLAYER.y
-        this.TGT.x = this.PLAYER.x
+
+        if(this.checkLOS()) {
+            this.TGT.y = this.PLAYER.pos.y
+            this.TGT.x = this.PLAYER.pos.x
+        }
+
+        /* console.log(`TARGET: ${this.TGT.x} ${this.TGT.y}, PLAYER: ${this.PLAYER.pos.x} ${this.PLAYER.pos.y}`) */
+        console.log(this.checkLOS())
+        console.log(this.TGT.x === this.PLAYER.pos.x)
+        
         this.faceTGT()
         this.vel.x = Math.sin(toRadians(this.dir))
         this.vel.y = Math.cos(toRadians(this.dir))
@@ -48,6 +54,7 @@ export class Bush extends EnemyBase {
             this.attackTimer = 0
             this.sheet = Sheets.ShrubAttack
         }
+        this.dir += 90
 
     }
 
@@ -60,8 +67,7 @@ export class Bush extends EnemyBase {
             this.vel.x = 0
             this.vel.y = 0
         }
-        
-        console.log(this.attackTimer)
+    
 
         this.attackTimer++
 

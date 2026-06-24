@@ -58,7 +58,7 @@ const Sheets = {
     Shrub: SpriteSheet.fromImageSource({
         image: Resources.Shrubbery,
         grid: {
-            rows: 1,
+            rows: 8,
             columns: 6,
             spriteHeight: 64,
             spriteWidth: 64,
