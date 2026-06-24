@@ -41,7 +41,6 @@ export class Player extends Actor {
         this.game = engine
 
         this.resetPlayer()
-        this.events.on("collisionstart", (event) => this.collide(event));
     }
 
     resetPlayer() {
@@ -205,12 +204,4 @@ export class Player extends Actor {
 
         this.vel = new Vector(0, 0)
     }
-
-    collide(event) {
-            const otherObject = event.other.owner;
-            if (otherObject instanceof CanBullet) {
-                console.log("can detected")
-            }
-            // console.log(otherObject);
-        }
 }
