@@ -42,42 +42,36 @@ export class CanBullet extends RenderObject {
             this.timer += 0.1 ;
             this.vertical = -3 + Math.sin(this.timer*this.archSpeed)*5.5;
         } else if (this.canMove){
-            this.body.collisionType = CollisionType.Fixed;
+            this.body.collisionType = CollisionType.Passive;
             this.canMove = false;
             
             this.collider.set(new CircleCollider({
                 radius: 1.5,
             }))
-            console.log(this.vertical);
         } else {
-            if (Math.sqrt((Math.pow(this.player.pos.x - this.pos.x, 2)) + (Math.pow(this.player.pos.y - this.pos.y, 2))) < 1) {
+            const playerDistance = Math.sqrt((Math.pow(this.player.pos.x - this.pos.x, 2)) + (Math.pow(this.player.pos.y - this.pos.y, 2)))
+            if (playerDistance < 1) {
                 this.sheet = Sheets.CanAllert
                 this.vertical = -0.6;
+                if (playerDistance < 0.5) {
+                    this.body.collisionType = CollisionType.Fixed;
+                }
             } else {
                 this.sheet = Sheets.Can;
                 this.vertical = -5.483061636887803
+                this.body.collisionType = CollisionType.Passive;
             }
         }
-        if (this.groundCollider != undefined) {
-            // this.groundCollider.rotation = Math.atan2(this.player.pos.y - this.pos.y, this.player.pos.x - this.pos.x);
-            console.log(this.pos, this.groundCollider.pos)
-        }
-
-        
-        
-
-        
     }
 
     collide(event) {
         const otherObject = event.other.owner;
-        if (otherObject instanceof WallCollider) {
+        if (otherObject.isWallCollider) {
             if (this.pos.x >= otherObject.pos.x-0.5 && this.pos.x <= otherObject.pos.x+0.5) {
                 this.rotation = -this.rotation;
             } else {
                 this.rotation = -this.rotation + Math.PI;
             }
-            console.log(this.pos.x, otherObject.pos.x)
         }
         if (otherObject instanceof Player) {
             this.hp--;
@@ -86,6 +80,5 @@ export class CanBullet extends RenderObject {
                 this.kill();
             }
         }
-        // console.log(otherObject);
     }
 }
