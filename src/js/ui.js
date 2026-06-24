@@ -1,6 +1,7 @@
 import { ScreenElement, Vector, Canvas } from 'excalibur'
 import { Resources } from './resources.js'
 import { BurnerWeapon } from './weapons/burner-weapon.js'
+import { CanWeapon } from './weapons/can-weapon.js'
 import { OxygenMask } from './weapons/oxygen-mask.js'
 
 const SCREEN_W = 1280
@@ -31,6 +32,7 @@ export class UI extends ScreenElement {
 
         this.graphics.use(hudCanvas)
         this.addChild(new BurnerWeapon(this.player, 1));
+        this.addChild(new CanWeapon(this.player, 2));
         this.addChild(new OxygenMask(this.player, 4));
     }
 

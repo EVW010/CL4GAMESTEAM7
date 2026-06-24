@@ -8,6 +8,9 @@ const Resources = {
     MadShrub: new ImageSource('images/shrubattack.png'),
     BurnerWeapon: new ImageSource('images/ui/burner-weapon.png'),
     OxygenMask: new ImageSource('images/ui/oxygen-mask.png'),
+    CanWeapon: new ImageSource('images/ui/metal-can.png'),
+    CanBullet: new ImageSource('images/metal-can-bullet.png'),
+    CanAllert: new ImageSource('images/can-allert.png'),
 
     BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
         filtering: ImageFiltering.Pixel
@@ -54,7 +57,24 @@ const Sheets = {
             spriteWidth: 64
         }
     }),
-
+    Can: SpriteSheet.fromImageSource({
+        image: Resources.CanBullet,
+        grid: {
+            rows: 1,
+            columns: 1,
+            spriteHeight: 800,
+            spriteWidth: 800
+        }
+    }),
+    CanAllert: SpriteSheet.fromImageSource({
+        image: Resources.CanAllert,
+        grid: {
+            rows: 1,
+            columns: 1,
+            spriteHeight: 128,
+            spriteWidth: 128
+        }
+    }),
     Shrub: SpriteSheet.fromImageSource({
         image: Resources.Shrubbery,
         grid: {
@@ -64,7 +84,6 @@ const Sheets = {
             spriteWidth: 64,
         }
     }),
-
     ShrubAttack: SpriteSheet.fromImageSource({
         image: Resources.MadShrub,
         grid: {

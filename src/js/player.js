@@ -1,5 +1,6 @@
 import { Actor, Vector, Keys, CollisionType, CircleCollider } from "excalibur"
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
+import { CanBullet } from './weapons/can-bullet.js'
 
 export class Player extends Actor {
 
@@ -50,6 +51,7 @@ export class Player extends Actor {
         this.oxygenLevel = this.maxoxygenLevel
 
         this.burnerWeaponProgress = 0
+        this.canWeaponProgress = 0
         this.selectedWeapon = 1
 
         this.isDead = false
