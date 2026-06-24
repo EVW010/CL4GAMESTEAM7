@@ -87,6 +87,34 @@ export class MapLevel1 extends Scene {
         this.add(new UI(this.player))
     }
 
+    onActivate() {
+        this.player.setCollisionMap(MAP, isWallTile)
+    }
+
+    onPreUpdate(engine) {
+        if (this.isPlayerNearTile('D')) {
+            engine.goToScene('winScreen')
+        }
+    }
+
+    isPlayerNearTile(tileType) {
+        for (let y = 0; y < MAP.length; y++) {
+            for (let x = 0; x < MAP[y].length; x++) {
+                if (MAP[y][x] !== tileType) continue
+
+                const dx = this.player.pos.x - (x + 0.5)
+                const dy = this.player.pos.y - (y + 0.5)
+                const distance = Math.sqrt(dx * dx + dy * dy)
+
+                if (distance < 1.1) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
     castRay(angle) {
         const px = this.player.pos.x
         const py = this.player.pos.y
@@ -208,11 +236,9 @@ export class MapLevel1 extends Scene {
         const sliceWidth = SCREEN_W / RAYS
         const angleStep = FOV / RAYS
 
-        
         ctx.fillStyle = 'rgb(0, 204, 255)'
         ctx.fillRect(0, 0, SCREEN_W, SCREEN_H / 2)
 
-    
         ctx.fillStyle = 'rgb(0, 152, 28)'
         ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
 
@@ -263,6 +289,7 @@ export class MapLevel1 extends Scene {
                 )
             }
         }
+
         ctx.fillStyle = 'red'
         ctx.fillRect(
             this.player.pos.x * miniMapScaleX + offsetX - 2,

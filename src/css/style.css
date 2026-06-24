@@ -4,17 +4,57 @@
     box-sizing: border-box;
 }
 
+html,
 body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
+
     background-color: #111;
     font-family: "Press Start 2P", "Courier New", monospace;
+
+    overflow: hidden;
+}
+
+body {
+    position: fixed;
+    inset: 0;
+}
+
+/* FULLSCREEN GAME CANVAS */
+#root,
+#app,
+#game,
+.game-container {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
     overflow: hidden;
 }
 
 canvas {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw !important;
+    height: 100vh !important;
+
     display: block;
+
+    margin: 0;
+    padding: 0;
+
+    background: #000;
+
     image-rendering: pixelated;
+    object-fit: cover;
 }
 
 .hidden {
@@ -26,6 +66,9 @@ canvas {
     position: fixed;
     inset: 0;
     z-index: 100;
+
+    width: 100vw;
+    height: 100vh;
 
     background-image: url('/images/titleScreenBackground.png');
     background-size: cover;
@@ -217,6 +260,9 @@ canvas {
     position: fixed;
     inset: 0;
     z-index: 99999;
+
+    width: 100vw;
+    height: 100vh;
 
     display: flex;
     justify-content: center;

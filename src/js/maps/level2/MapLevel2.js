@@ -1,58 +1,58 @@
-import { Scene, Canvas, Actor, CollisionType } from 'excalibur'
-import wallTextureUrl from './assets/textures/oficewalltexture.png'
-import glassTextureUrl from './assets/textures/officeglas.jpg'
-import floorTextureUrl from './assets/textures/floortexture.png'
-import ceilingTextureUrl from './assets/textures/officeceiling.png'
+import { Scene, Canvas, Actor, Vector } from 'excalibur'
+import officeWallTextureUrl from './assets/textures/office-wall-upload.png'
+import officeFloorTextureUrl from './assets/textures/office-floor-upload.png'
+import officeDoorTextureUrl from './assets/textures/office-exit-door.png'
+import officeGlassTextureUrl from './assets/textures/office-glass.jpg'
 import { UI } from '../../ui.js'
 
-// . = vloer, # = kantoor muur, G = glaswand, D = uitgang
+// Office prologue map
+// . = vloer
+// # = buitenmuur / kantoor muur
+// P = kantoorwand
+// G = glaswand
+// D = exit deur naar het bos-level
 export const MAP_LEVEL2 = [
-    '####################',
-    '#........#.........#',
-    '#..GGG...#..GGG....#',
-    '#........#.........#',
-    '#..####..#..####...#',
-    '#..................D',
-    '#..####..#..####...#',
-    '#........#.........#',
-    '#..GGG......GGG....#',
-    '#..................#',
-    '####################',
+    '########################',
+    '#..........G...........#',
+    '#..PPPP....G....PPPP...#',
+    '#..P..P.........P..P...#',
+    '#..P..P..GGGGG..P..P...#',
+    '#......................D',
+    '#..P..P..GGGGG..P..P...#',
+    '#..P..P.........P..P...#',
+    '#..PPPP....G....PPPP...#',
+    '#..........G...........#',
+    '########################',
 ]
 
-export const isLevel2WallTile = (char) => char === '#' || char === 'G' || char === 'D'
+export const isLevel2WallTile = (char) => {
+    return char === '#' || char === 'P' || char === 'G' || char === 'D'
+}
 
 const SCREEN_W = 1280
 const SCREEN_H = 720
-const RAYS = 200
+const RAYS = 260
 const FOV = Math.PI / 3
 
-export class MapLevel2 extends Scene {
+const OFFICE_START_POS = new Vector(2.5, 5.5)
+const OFFICE_START_ROTATION = 0
 
+export class MapLevel2 extends Scene {
     constructor(player) {
         super()
         this.player = player
+        this.depthBuffer = []
+        this.prologueStartTime = 0
+        this.hasExitedOffice = false
     }
 
-    onInitialize(engine) {
+    onInitialize() {
         this.add(this.player)
 
-        for (let y = 0; y < MAP_LEVEL2.length; y++) {
-            for (let x = 0; x < MAP_LEVEL2[y].length; x++) {
-                if (isLevel2WallTile(MAP_LEVEL2[y][x])) {
-                    const wall = new Actor({
-                        collisionType: CollisionType.Fixed,
-                    })
-
-                    this.add(wall)
-                }
-            }
-        }
-
-        this.wallImg = this.loadImage(wallTextureUrl)
-        this.glassImg = this.loadImage(glassTextureUrl)
-        this.floorImg = this.loadImage(floorTextureUrl)
-        this.ceilingImg = this.loadImage(ceilingTextureUrl)
+        this.wallImg = this.loadImage(officeWallTextureUrl)
+        this.floorImg = this.loadImage(officeFloorTextureUrl)
+        this.doorImg = this.loadImage(officeDoorTextureUrl)
+        this.glassImg = this.loadImage(officeGlassTextureUrl)
 
         const raycastActor = new Actor({
             x: SCREEN_W / 2,
@@ -73,12 +73,24 @@ export class MapLevel2 extends Scene {
     }
 
     onActivate() {
+        this.hasExitedOffice = false
+        this.prologueStartTime = performance.now()
+
         this.player.setCollisionMap(MAP_LEVEL2, isLevel2WallTile)
+        this.player.pos = OFFICE_START_POS.clone()
+        this.player.rotation = OFFICE_START_ROTATION
     }
 
     onPreUpdate(engine) {
+        if (this.hasExitedOffice) return
+
         if (this.isPlayerNearTile('D')) {
-            engine.goToScene('winScreen')
+            this.hasExitedOffice = true
+
+            // Office is de prologue.
+            // De EXIT deur stuurt de speler naar het bos level.
+            this.player.resetPlayer()
+            engine.goToScene('level2')
         }
     }
 
@@ -86,9 +98,11 @@ export class MapLevel2 extends Scene {
         const img = new Image()
         img.src = src
         img.isLoaded = false
+
         img.onload = () => {
             img.isLoaded = true
         }
+
         return img
     }
 
@@ -101,7 +115,7 @@ export class MapLevel2 extends Scene {
                 const dy = this.player.pos.y - (y + 0.5)
                 const distance = Math.sqrt(dx * dx + dy * dy)
 
-                if (distance < 1.1) {
+                if (distance < 1.15) {
                     return true
                 }
             }
@@ -173,33 +187,50 @@ export class MapLevel2 extends Scene {
             texX = ((px + perpDist * dx) % 1 + 1) % 1
         }
 
-        const tileType = MAP_LEVEL2[mapY]?.[mapX] ?? '#'
+        perpDist = Math.max(perpDist, 0.0001)
 
         return {
             distance: perpDist,
-            wallHeight: 1000 / perpDist,
+            wallHeight: Math.min(2400, 1000 / perpDist),
             texX,
-            tileType
+            tileType: MAP_LEVEL2[mapY]?.[mapX] ?? '#',
+            mapX,
+            mapY,
+            side
         }
     }
 
-    drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX, tileType) {
-        const top = Math.floor(SCREEN_H / 2 - wallHeight / 2)
+    getWallImage(tileType) {
+        if (tileType === 'D') return this.doorImg
+        if (tileType === 'G') return this.glassImg
 
-        const img = tileType === 'G' ? this.glassImg : this.wallImg
+        return this.wallImg
+    }
 
-        if (!img.isLoaded) {
-            const c = Math.floor(190 / (1 + distance / 4))
-            ctx.fillStyle = tileType === 'G' ? `rgb(40, ${c}, ${c})` : `rgb(${c}, ${c}, ${c})`
-            ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, wallHeight)
-            return
-        }
+    getTextureOffset(tileType, mapX, mapY) {
+        if (tileType === 'D') return 0
+        if (tileType === 'G') return 0
 
-        const srcX = Math.floor(texX * img.width)
+        return ((mapX * 11 + mapY * 5) % 64) / 64
+    }
+
+    getFallbackColor(tileType, distance) {
+        const shade = Math.floor(210 / (1 + distance / 4))
+
+        if (tileType === 'D') return `rgb(${shade}, ${Math.floor(shade * 0.62)}, 28)`
+        if (tileType === 'G') return `rgb(30, ${Math.floor(shade * 0.9)}, ${shade})`
+        if (tileType === 'P') return `rgb(${Math.floor(shade * 0.75)}, ${Math.floor(shade * 0.78)}, ${shade})`
+
+        return `rgb(${shade}, ${shade}, ${shade})`
+    }
+
+    drawWallTexture(ctx, img, col, top, wallHeight, sliceWidth, ray) {
+        const offset = this.getTextureOffset(ray.tileType, ray.mapX, ray.mapY)
+        const sourceX = Math.floor((((ray.texX + offset) % 1) + 1) % 1 * img.width)
 
         ctx.drawImage(
             img,
-            srcX,
+            sourceX,
             0,
             1,
             img.height,
@@ -208,31 +239,102 @@ export class MapLevel2 extends Scene {
             sliceWidth + 1,
             wallHeight
         )
+    }
 
-        const alpha = Math.min(0.82, distance / 8)
+    drawWallSlice(ctx, col, ray, sliceWidth) {
+        const top = Math.floor(SCREEN_H / 2 - ray.wallHeight / 2)
+        const img = this.getWallImage(ray.tileType)
+
+        if (!img.isLoaded) {
+            ctx.fillStyle = this.getFallbackColor(ray.tileType, ray.distance)
+            ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, ray.wallHeight)
+            return
+        }
+
+        this.drawWallTexture(ctx, img, col, top, ray.wallHeight, sliceWidth, ray)
+
+        if (ray.tileType === 'P') {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.22)'
+            ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, ray.wallHeight)
+        }
+
+        if (ray.tileType === 'G') {
+            ctx.fillStyle = 'rgba(120, 220, 255, 0.10)'
+            ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, ray.wallHeight)
+        }
+
+        if (ray.tileType === 'D') {
+            ctx.fillStyle = 'rgba(40, 255, 90, 0.08)'
+            ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, ray.wallHeight)
+        }
+
+        const sideShadow = ray.side === 1 ? 0.14 : 0
+        const distanceShadow = Math.min(0.72, ray.distance / 9)
+        const alpha = Math.min(0.84, distanceShadow + sideShadow)
 
         ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`
-        ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, wallHeight)
+        ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, ray.wallHeight)
+    }
+
+    drawRepeatedImage(ctx, img, x, y, width, height, tileSize) {
+        if (!img.isLoaded) return false
+
+        ctx.save()
+        ctx.beginPath()
+        ctx.rect(x, y, width, height)
+        ctx.clip()
+
+        for (let tileY = y; tileY < y + height; tileY += tileSize) {
+            for (let tileX = x; tileX < x + width; tileX += tileSize) {
+                ctx.drawImage(img, tileX, tileY, tileSize, tileSize)
+            }
+        }
+
+        ctx.restore()
+        return true
     }
 
     drawTexturedBackground(ctx) {
-        if (this.ceilingImg.isLoaded) {
-            const ceilingPattern = ctx.createPattern(this.ceilingImg, 'repeat')
-            ctx.fillStyle = ceilingPattern
-            ctx.fillRect(0, 0, SCREEN_W, SCREEN_H / 2)
-        } else {
-            ctx.fillStyle = 'rgb(160, 160, 160)'
-            ctx.fillRect(0, 0, SCREEN_W, SCREEN_H / 2)
+        ctx.imageSmoothingEnabled = false
+
+        // Plafond - lichter kantoor plafond
+        ctx.fillStyle = 'rgb(82, 90, 100)'
+        ctx.fillRect(0, 0, SCREEN_W, SCREEN_H / 2)
+
+        ctx.globalAlpha = 0.20
+        this.drawRepeatedImage(ctx, this.floorImg, 0, 0, SCREEN_W, SCREEN_H / 2, 180)
+        ctx.globalAlpha = 1
+
+        // Plafond lijnen
+        for (let x = 0; x < SCREEN_W; x += 160) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'
+            ctx.fillRect(x, 0, 4, SCREEN_H / 2)
         }
 
-        if (this.floorImg.isLoaded) {
-            const floorPattern = ctx.createPattern(this.floorImg, 'repeat')
-            ctx.fillStyle = floorPattern
-            ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
-        } else {
-            ctx.fillStyle = 'rgb(90, 90, 90)'
+        for (let y = 0; y < SCREEN_H / 2; y += 90) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.10)'
+            ctx.fillRect(0, y, SCREEN_W, 4)
+        }
+
+        // Vloer
+        if (!this.drawRepeatedImage(ctx, this.floorImg, 0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2, 260)) {
+            ctx.fillStyle = 'rgb(57, 65, 74)'
             ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
         }
+
+        // Lichte plafond schaduw
+        const ceilingGradient = ctx.createLinearGradient(0, 0, 0, SCREEN_H / 2)
+        ceilingGradient.addColorStop(0, 'rgba(255, 255, 255, 0.12)')
+        ceilingGradient.addColorStop(1, 'rgba(0, 0, 0, 0.18)')
+        ctx.fillStyle = ceilingGradient
+        ctx.fillRect(0, 0, SCREEN_W, SCREEN_H / 2)
+
+        // Vloer schaduw
+        const floorGradient = ctx.createLinearGradient(0, SCREEN_H / 2, 0, SCREEN_H)
+        floorGradient.addColorStop(0, 'rgba(255, 255, 255, 0.08)')
+        floorGradient.addColorStop(1, 'rgba(0, 0, 0, 0.58)')
+        ctx.fillStyle = floorGradient
+        ctx.fillRect(0, SCREEN_H / 2, SCREEN_W, SCREEN_H / 2)
     }
 
     drawScene(ctx) {
@@ -240,23 +342,59 @@ export class MapLevel2 extends Scene {
         const angleStep = FOV / RAYS
 
         this.drawTexturedBackground(ctx)
+        this.depthBuffer = []
 
         for (let i = 0; i < RAYS; i++) {
             const rayAngle = this.player.rotation - FOV / 2 + i * angleStep
-            const { distance, wallHeight, texX, tileType } = this.castRay(rayAngle)
+            const ray = this.castRay(rayAngle)
 
-            this.drawWallSlice(
-                ctx,
-                i,
-                distance,
-                wallHeight,
-                sliceWidth,
-                texX,
-                tileType
-            )
+            this.depthBuffer[i] = ray.distance
+            this.drawWallSlice(ctx, i, ray, sliceWidth)
         }
 
         this.drawMiniMap(ctx)
+        this.drawMissionText(ctx)
+    }
+
+    drawMissionText(ctx) {
+        const elapsed = performance.now() - this.prologueStartTime
+
+        ctx.save()
+        ctx.imageSmoothingEnabled = false
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = '20px "Press Start 2P", monospace'
+
+        if (elapsed < 6500) {
+            const boxX = 190
+            const boxY = 460
+            const boxW = 900
+            const boxH = 145
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.78)'
+            ctx.fillRect(boxX, boxY, boxW, boxH)
+
+            ctx.strokeStyle = 'rgba(125, 255, 155, 0.9)'
+            ctx.lineWidth = 4
+            ctx.strokeRect(boxX, boxY, boxW, boxH)
+
+            ctx.fillStyle = '#7dff9b'
+            ctx.fillText('PROLOOG: KANTOOR', SCREEN_W / 2, boxY + 32)
+
+            ctx.font = '15px "Press Start 2P", monospace'
+            ctx.fillStyle = 'white'
+            ctx.fillText('Je wordt wakker in een verlaten kantoor.', SCREEN_W / 2, boxY + 70)
+            ctx.fillText('Vind de EXIT deur om naar buiten te komen.', SCREEN_W / 2, boxY + 103)
+        }
+
+        ctx.textAlign = 'left'
+        ctx.font = '14px "Press Start 2P", monospace'
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.62)'
+        ctx.fillRect(28, SCREEN_H - 68, 560, 42)
+        ctx.fillStyle = '#7dff9b'
+        ctx.fillText('DOEL: zoek de groene EXIT deur', 48, SCREEN_H - 43)
+
+        ctx.restore()
     }
 
     drawMiniMap(ctx) {
@@ -264,20 +402,32 @@ export class MapLevel2 extends Scene {
         const miniMapScaleY = 6
 
         const offsetX = SCREEN_W - MAP_LEVEL2[0].length * miniMapScaleX - 10
-        const offsetY = 10
+
+        // Minimap iets lager gezet zodat hij goed zichtbaar is met fullscreen
+        const offsetY = 70
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)'
+        ctx.fillRect(
+            offsetX - 4,
+            offsetY - 4,
+            MAP_LEVEL2[0].length * miniMapScaleX + 8,
+            MAP_LEVEL2.length * miniMapScaleY + 8
+        )
 
         for (let y = 0; y < MAP_LEVEL2.length; y++) {
             for (let x = 0; x < MAP_LEVEL2[y].length; x++) {
                 const tile = MAP_LEVEL2[y][x]
 
-                if (tile === 'G') {
-                    ctx.fillStyle = 'rgb(0, 180, 220)'
+                if (tile === 'D') {
+                    ctx.fillStyle = 'rgb(80, 255, 110)'
+                } else if (tile === 'G') {
+                    ctx.fillStyle = 'rgb(0, 170, 230)'
+                } else if (tile === 'P') {
+                    ctx.fillStyle = 'rgb(85, 90, 100)'
                 } else if (tile === '#') {
-                    ctx.fillStyle = 'rgb(140, 140, 140)'
-                } else if (tile === 'D') {
-                    ctx.fillStyle = 'rgb(255, 220, 0)'
+                    ctx.fillStyle = 'rgb(145, 150, 160)'
                 } else {
-                    ctx.fillStyle = 'rgb(25, 25, 25)'
+                    ctx.fillStyle = 'rgb(24, 26, 30)'
                 }
 
                 ctx.fillRect(

@@ -6,6 +6,7 @@ import { ResourceLoader } from './resources.js'
 import { Player } from './player.js'
 
 import { MapLevel1 } from './maps/level1/MapLevel1.js'
+import { MapLevel2 } from './maps/level2/MapLevel2.js'
 import { StartScene } from './scenes/StartScene.js'
 import { GameOverScene } from './scenes/GameOverScene.js'
 import { WinScene } from './scenes/WinScene.js'
@@ -56,8 +57,11 @@ export class Game extends Engine {
         const winScreen = new WinScene()
         this.addScene('winScreen', winScreen)
 
-        const level1 = new MapLevel1(this.player)
+        const level1 = new MapLevel2(this.player)
         this.addScene('level1', level1)
+
+        const level2 = new MapLevel1(this.player)
+        this.addScene('level2', level2)
 
         this.goToScene('startScreen')
     }

@@ -30,6 +30,11 @@ export class Player extends Actor {
             width: 0.8,
             height: 0.8
         })
+
+        // Standaard gebruikt hij level 1 collision.
+        // Bij office level wordt dit automatisch vervangen.
+        this.collisionMap = MAP
+        this.collisionCheck = isWallTile
     }
 
     onInitialize(engine) {
@@ -57,8 +62,23 @@ export class Player extends Actor {
         this.chokeSoundTimer = 0
     }
 
+    setCollisionMap(map, collisionCheck) {
+        this.collisionMap = map
+        this.collisionCheck = collisionCheck
+    }
+
     isWall(x, y) {
-        return isWallTile(MAP[Math.floor(y)]?.[Math.floor(x)])
+        const tileX = Math.floor(x)
+        const tileY = Math.floor(y)
+
+        const tile = this.collisionMap?.[tileY]?.[tileX]
+
+        // Buiten de map is muur, zodat je niet uit de map kan lopen
+        if (tile === undefined) {
+            return true
+        }
+
+        return this.collisionCheck(tile)
     }
 
     die(engine) {
@@ -101,7 +121,7 @@ export class Player extends Actor {
         const arcadeX = arcadeAxisX(engine)
         const arcadeY = arcadeAxisY(engine)
 
-        // Rotatie met toetsenbord of arcade joystick
+        // Roteren met pijltjes links/rechts
         if (engine.input.keyboard.isHeld(Keys.Left)) {
             this.rotation -= this.rotationSpeed
         }
@@ -110,6 +130,7 @@ export class Player extends Actor {
             this.rotation += this.rotationSpeed
         }
 
+        // Roteren met arcade joystick
         if (arcadeX !== 0) {
             this.rotation += arcadeX * this.rotationSpeed
         }
@@ -119,7 +140,7 @@ export class Player extends Actor {
         let forwardInput = 0
         let strafeInput = 0
 
-        // Toetsenbord controls blijven werken voor testen op laptop
+        // Toetsenbord controls
         if (engine.input.keyboard.isHeld(Keys.W)) {
             forwardInput += 1
         }
@@ -136,7 +157,7 @@ export class Player extends Actor {
             strafeInput -= 1
         }
 
-        // Arcade joystick: omhoog/omlaag = vooruit/achteruit
+        // Arcade joystick omhoog/omlaag
         forwardInput += -arcadeY
 
         forwardInput = this.clampInput(forwardInput)
@@ -145,11 +166,11 @@ export class Player extends Actor {
         let moveX = 0
         let moveY = 0
 
-        // Vooruit / achteruit in kijkrichting
+        // Vooruit en achteruit
         moveX += Math.cos(this.rotation) * this.movementSpeed * dt * forwardInput
         moveY += Math.sin(this.rotation) * this.movementSpeed * dt * forwardInput
 
-        // Strafen met A en D op toetsenbord
+        // Links en rechts strafen
         moveX += Math.sin(this.rotation) * this.movementSpeed * dt * strafeInput
         moveY -= Math.cos(this.rotation) * this.movementSpeed * dt * strafeInput
 
@@ -176,7 +197,7 @@ export class Player extends Actor {
             return
         }
 
-        // Botsing met muren
+        // Collision met muren
         const margin = 0.15
 
         const xEdge = this.pos.x + moveX + Math.sign(moveX) * margin
