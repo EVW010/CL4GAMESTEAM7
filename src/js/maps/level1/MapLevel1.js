@@ -7,6 +7,7 @@ import wallTextureDoorUrl from './assets/walls/wallspritelevel1-door.png'
 import { MapEngine } from '../MapEngine.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
+import { Bush } from '../../enemies/George.js'
 import { WallCollider } from './wall-collider.js'
 
 // . = floor, # = wall, D = door
@@ -35,6 +36,33 @@ export class MapLevel1 extends MapEngine {
         this.floorColor = 'rgb(45, 65, 25)'
     }
 
+    onInitialize(engine) {
+        this.add(this.player)
+
+        for (let y = 0; y < MAP.length; y++) {
+            for (let x = 0; x < MAP[y].length; x++) {
+                if (isWallTile(MAP[y][x])) {
+                    const wall = new Actor({
+                        collisionType: CollisionType.Fixed,
+                    })
+
+                    this.add(wall)
+                }
+
+                if (MAP[y][x] === '0') {
+                    const obj = new RenderObject(new Vector(x, y), 90, this.player, 0.3)
+                    this.add(obj)
+                    const objt = new RenderObject(new Vector(x, y), 180, this.player, 0.3)
+                    obj.vertical = 10
+                    this.add(objt)
+                }
+
+                if (MAP[y][x] === 'S') {
+                    const obj = new Bush(new Vector(x, y), 90, this.player)
+                    this.add(obj)
+                }
+            }
+        }
     isWallTile(char) {
         return char === '#' || char === 'D' || char === 'L'
     }
