@@ -1,9 +1,7 @@
 import { Actor, CollisionType, Vector } from 'excalibur'
-import wallTexture1Url from './assets/walls/wallspritelevel1-1.png'
-import wallTexture2Url from './assets/walls/wallspritelevel1-2.png'
-import wallTexture3Url from './assets/walls/wallspritelevel1-3.png'
-import wallTextureLoraxUrl from './assets/walls/wallspritelevel1-lorax.png'
-import wallTextureDoorUrl from './assets/walls/wallspritelevel1-door.png'
+import wallTexture1Url from './assets/wallspritelevel1-1.png'
+import wallTexture2Url from './assets/wallspritelevel1-2.jpg'
+import doorTextureUrl from './assets/wallspritelevel1-door.png'
 import { MapEngine } from '../MapEngine.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
@@ -21,7 +19,7 @@ export const MAP = [
     '#.#.........#.#..#.#',
     '#.##..#.###...#.##.#',
     '#..................#',
-    '##################L#',
+    '####################',
 ]
 
 export const isWallTile = (char) => char === '#' || char === 'D' || char === 'L'
@@ -31,8 +29,8 @@ export class MapLevel1 extends MapEngine {
         super(player)
         this.map = MAP
         this.wallTextureMap = {}
-        this.skyColor = 'rgb(55, 75, 92)'
-        this.floorColor = 'rgb(45, 65, 25)'
+        this.skyColor = 'rgb(30, 35, 45)'
+        this.floorColor = 'rgb(55, 58, 65)'
     }
 
     isWallTile(char) {
@@ -43,39 +41,43 @@ export class MapLevel1 extends MapEngine {
         return char === 'D' ? 'level2' : null
     }
 
+    // Return the color for the mini-map based on the tile type
     getMiniMapColor(tile) {
         if (tile === '#') return 'rgb(150, 0, 150)'
-        if (tile === 'D') return 'rgb(120, 70, 0)'
-        if (tile === 'L') return 'rgb(255, 140, 0)'
+        if (tile === 'D') return 'rgb(244, 0, 0)'
         return 'rgb(0, 0, 0)'
     }
 
     getTexture(tileType, mapX, mapY) {
-        if (tileType === 'L') return { img: this.wallImgs[3], loaded: this.wallImgsLoaded[3] }
-        if (tileType === 'D') return { img: this.wallImgs[4], loaded: this.wallImgsLoaded[4] }
+        if (tileType === 'D') {
+            return { img: this.doorImg, loaded: this.doorImgLoaded }
+        }
         const idx = this.wallTextureMap[`${mapX},${mapY}`] ?? 0
         return { img: this.wallImgs[idx], loaded: this.wallImgsLoaded[idx] }
     }
 
+    // Setup the map by adding wall colliders and render objects based on the map layout
     onMapSetup(engine) {
-        const urls = [wallTexture1Url, wallTexture2Url, wallTexture3Url, wallTextureLoraxUrl, wallTextureDoorUrl]
+        const urls = [wallTexture1Url, wallTexture2Url]
         this.wallImgs = urls.map(url => {
             const img = new Image()
             img.src = url
             return img
         })
-        this.wallImgsLoaded = [false, false, false, false, false]
+        this.wallImgsLoaded = [false, false]
         this.wallImgs.forEach((img, i) => {
             img.onload = () => { this.wallImgsLoaded[i] = true }
         })
 
-        // random wall textures
+        this.doorImg = new Image()
+        this.doorImg.src = doorTextureUrl
+        this.doorImgLoaded = false
+        this.doorImg.onload = () => { this.doorImgLoaded = true }
+
         const wallPositions = []
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
-                if (this.isWallTile(this.map[y][x])) {
-                    wallPositions.push({ x, y })
-                }
+                if (this.map[y][x] === '#') wallPositions.push({ x, y })
             }
         }
         for (let i = wallPositions.length - 1; i > 0; i--) {
@@ -83,7 +85,7 @@ export class MapLevel1 extends MapEngine {
             ;[wallPositions[i], wallPositions[j]] = [wallPositions[j], wallPositions[i]]
         }
         wallPositions.forEach(({ x, y }, i) => {
-            this.wallTextureMap[`${x},${y}`] = i % 3
+            this.wallTextureMap[`${x},${y}`] = i % 2
         })
 
         for (let y = 0; y < this.map.length; y++) {

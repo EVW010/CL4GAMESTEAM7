@@ -2,6 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(python -c ' *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\coast\\Downloads\\CLE 4\\CL4GAMESTEAM7\\src\\js\\maps\\Level3\\assets\\walls"
     ]
   }
 }
