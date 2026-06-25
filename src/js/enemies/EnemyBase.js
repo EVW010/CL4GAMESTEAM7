@@ -27,16 +27,16 @@ export class EnemyBase extends RenderObject {
 
         if(this.health >= 0) {
 
-            if(typeof this.deathEffect()  === 'function') {
-                this.deathEffect()
-            }
+            // if(typeof this.deathEffect()  === 'function') {
+            //     this.deathEffect()
+            // }
             this.linked.kill()
             this.kill()
 
         } else {
-            if(typeof this.damageEffect() === 'function') {
-                this.damageEffect()
-            }
+            // if(typeof this.damageEffect() === 'function') {
+            //     this.damageEffect()
+            // }
         }
         
     }

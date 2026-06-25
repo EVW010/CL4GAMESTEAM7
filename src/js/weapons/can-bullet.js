@@ -4,6 +4,8 @@ import { RenderObject } from '../renderBase/renderbase.js'
 import { addAngle } from "../functions.js";
 import { WallCollider } from "../maps/level1/wall-collider.js";
 import { Player } from "../player.js";
+import { EnemyBase } from "../enemies/EnemyBase.js";
+
 
 export class CanBullet extends RenderObject {
 
