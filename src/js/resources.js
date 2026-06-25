@@ -1,4 +1,5 @@
 import { ImageSource, Loader, SpriteSheet, ImageFiltering, Sprite } from 'excalibur'
+import { PaintSplatter } from './weapons/paint-splatter'
 
 const Resources = {
     None: new ImageSource('images/PurpleCheckers.png'),
@@ -11,6 +12,8 @@ const Resources = {
     CanWeapon: new ImageSource('images/ui/metal-can.png'),
     CanBullet: new ImageSource('images/metal-can-bullet.png'),
     CanAllert: new ImageSource('images/can-allert.png'),
+    BrushWeapon: new ImageSource('images/ui/brush-weapon.png'),
+    PaintSplatter: new ImageSource('images/ui/paint-splatter.png'),
 
     BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
         filtering: ImageFiltering.Pixel
@@ -91,6 +94,15 @@ const Sheets = {
             rows: 1,
             spriteHeight: 64,
             spriteWidth: 64,
+        },
+    }),
+    PaintSplatter: SpriteSheet.fromImageSource({
+        image: Resources.PaintSplatter,
+        grid: {
+            columns: 5,
+            rows: 1,
+            spriteHeight: 72,
+            spriteWidth: 128,
         },
     }),
 }
