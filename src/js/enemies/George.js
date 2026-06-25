@@ -36,13 +36,21 @@ export class Bush extends EnemyBase {
     }
 /*  */
     state2() {
-        this.TGT.y = this.PLAYER.y
-        this.TGT.x = this.PLAYER.x
-        this.faceTGT()
+
+        if(this.checkLOS()) {
+
+            this.TGT.y = this.PLAYER.y
+            this.TGT.x = this.PLAYER.x
+            this.faceTGT()
+
+        }
+
+        
         this.vel.x = Math.sin(toRadians(this.dir))
         this.vel.y = Math.cos(toRadians(this.dir))
         let distvect = this.pos.sub(this.PLAYER.pos)
         let dist = (distvect.x * distvect.x) + (distvect.y * distvect.y)
+        this.dir += 90
         if(dist < 2) {
             this.state = 3
             this.attackTimer = 0
