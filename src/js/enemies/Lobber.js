@@ -2,11 +2,13 @@ import { EnemyBase } from "./EnemyBase";
 import { Vector, toRadians } from "excalibur";
 import { Sheets } from "../resources";
 
-export class Bush extends EnemyBase {
+export class Lobber extends EnemyBase {
     constructor(spawnerPos, dir, player) {
-        super(spawnerPos, dir, player, 0.2, 7)
+        super(spawnerPos, dir, player, 0.3, 15)
 
         this.attackTimer = 0
+
+        this.sheet = Sheets.Lobber
 
     }
 
@@ -21,21 +23,24 @@ export class Bush extends EnemyBase {
             case 3:
                 this.state3()
                 break
+            case 4:
+                this.state4()
+                break
         }
     }
 
 
-    state1() {
+    state1() { // SLEEP
         let distvect = this.pos.sub(this.PLAYER.pos)
         let dist = (distvect.x * distvect.x) + (distvect.y * distvect.y)
         if(dist < 9) {
             this.state = 2
             console.log('AWOKEN')
-            this.sheet = Sheets.Shrub
+            this.sheet = Sheets.LobberWalk
         }
     }
 /*  */
-    state2() {
+    state2() { // SEARCH
         this.TGT.y = this.PLAYER.y
         this.TGT.x = this.PLAYER.x
         this.faceTGT()
@@ -51,7 +56,7 @@ export class Bush extends EnemyBase {
 
     }
 
-    state3() {
+    state3() { // DESTROY
         // first frame entering attack
         if (this.attackTimer === 0) {
             this.sheet = Sheets.ShrubAttack

@@ -48,4 +48,12 @@ export class EnemyBase extends RenderObject {
         this.dir = addAngle(tmp, 180)
     }
 
+    RandomPoint(playerPos, minR, maxR) {
+        const angle = Math.random() * Math.PI * 2
+        const radius = minR + Math.random() * (maxR - minR)
+
+        this.TGT.x = playerPos.x + Math.cos(angle) * radius
+        this.TGT.y = playerPos.y + Math.sin(angle) * radius
+    }
+
 }
