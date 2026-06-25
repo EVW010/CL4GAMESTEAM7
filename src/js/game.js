@@ -9,8 +9,9 @@ import { MapLevel1 } from './maps/level1/MapLevel1.js'
 import { MapLevel2 } from './maps/level2/MapLevel2.js'
 import { MapLevel3 } from './maps/Level3/MapLevel3.js'
 import { MapLevel4 } from './maps/Level4/MapLevel4.js'
-import { WeaponsScene } from './scenes/WeaponsScene.js'
+
 import { StartScene } from './scenes/StartScene.js'
+import { WeaponsScene } from './scenes/WeaponsScene.js'
 import { GameOverScene } from './scenes/GameOverScene.js'
 import { WinScene } from './scenes/WinScene.js'
 
@@ -42,6 +43,9 @@ export class Game extends Engine {
 
         const startScreen = new StartScene()
         this.addScene('startScreen', startScreen)
+
+        const weaponsScreen = new WeaponsScene()
+        this.addScene('weapons', weaponsScreen)
 
         const gameOverScreen = new GameOverScene()
         this.addScene('gameOverScreen', gameOverScreen)
