@@ -2,6 +2,8 @@ import { Actor, Engine, Vector, DisplayMode, Keys, toDegrees, toRadians, Collisi
 
 export class WallCollider extends Actor {
 
+    isWallCollider = true;
+
     constructor(pos) {
         super({
             width: 1,

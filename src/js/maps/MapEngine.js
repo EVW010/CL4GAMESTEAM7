@@ -52,6 +52,7 @@ export class MapEngine extends Scene {
         this.add(raycastActor)
     }
 
+    // Cast a ray from the player's position at a given angle and return information about the first wall hit
     castRay(angle) {
         const px = this.player.pos.x
         const py = this.player.pos.y
@@ -127,6 +128,7 @@ export class MapEngine extends Scene {
         }
     }
 
+    // Draw a vertical slice of the wall at the given column, with the specified distance and height
     drawWallSlice(ctx, col, distance, wallHeight, sliceWidth, texX, tileType, mapX, mapY) {
         const top = Math.floor(SCREEN_H / 2 - wallHeight / 2)
         const { img, loaded } = this.getTexture(tileType, mapX, mapY)
@@ -157,6 +159,7 @@ export class MapEngine extends Scene {
         ctx.fillRect(col * sliceWidth, top, sliceWidth + 1, wallHeight)
     }
 
+    // Draw the entire scene, including the sky, floor, walls, and mini-map
     drawScene(ctx) {
         const sliceWidth = SCREEN_W / RAYS
         const angleStep = FOV / RAYS
@@ -180,9 +183,10 @@ export class MapEngine extends Scene {
         this.drawMiniMap(ctx)
     }
 
+    // Draw a mini-map in the top-right corner of the screen, showing the layout of the map and the player's position
     drawMiniMap(ctx) {
-        const miniMapScaleX = 6
-        const miniMapScaleY = 6
+        const miniMapScaleX = 9
+        const miniMapScaleY = 9
 
         const offsetX = SCREEN_W - this.map[0].length * miniMapScaleX - 10
         const offsetY = 10
