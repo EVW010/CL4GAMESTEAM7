@@ -64,7 +64,7 @@ export class StartScene extends Scene {
             <div class="retro-menu">
                 <p class="game-label">Team 7</p>
 
-                <h1 class="retro-title">Blue Collar Hero</h1>
+                <h1 class="retro-title">By Nature</h1>
 
                 <p class="game-synopsis">
                     Overleef het magische bos en vecht terug tegen het slechte bedrijf.
