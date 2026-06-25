@@ -1,6 +1,6 @@
 import { Actor, Vector, Keys, CollisionType, CircleCollider } from "excalibur"
 import { MAP, isWallTile } from './maps/level1/MapLevel1.js'
-import { CanBullet } from './weapons/can-bullet.js'
+import { RenderObject } from './renderBase/renderbase.js'
 
 export class Player extends Actor {
 
@@ -11,6 +11,7 @@ export class Player extends Actor {
 
     selectedWeapon = 1
     burnerWeaponProgress = 0
+    paintProgress = 0;
 
     hp = 100
     maxHp = 100
@@ -123,6 +124,10 @@ export class Player extends Actor {
             if (this.selectedWeapon > 5) {
                 this.selectedWeapon = 1;
             }
+        }
+
+        if (engine.input.keyboard.wasPressed(Keys.Space) && this.selectedWeapon == 3) {
+            
         }
 
         // Oxygen gaat omlaag als burnerWeaponProgress hoger wordt
