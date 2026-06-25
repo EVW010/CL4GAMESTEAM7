@@ -12,6 +12,8 @@ const Resources = {
     CanWeapon: new ImageSource('images/ui/metal-can.png'),
     CanBullet: new ImageSource('images/metal-can-bullet.png'),
     CanAllert: new ImageSource('images/can-allert.png'),
+    Lobber : new ImageSource('./images/Lobber.png'),
+    LobberWalk : new ImageSource('./images/LobberWalk.png'),
     BrushWeapon: new ImageSource('images/ui/brush-weapon.png'),
     PaintSplatter: new ImageSource('images/ui/paint-splatter.png'),
 
@@ -81,7 +83,7 @@ const Sheets = {
     Shrub: SpriteSheet.fromImageSource({
         image: Resources.Shrubbery,
         grid: {
-            rows: 1,
+            rows: 8,
             columns: 6,
             spriteHeight: 64,
             spriteWidth: 64,
@@ -92,6 +94,24 @@ const Sheets = {
         grid: {
             columns: 18,
             rows: 1,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        },
+    }),
+    Lobber: SpriteSheet.fromImageSource({
+        image: Resources.Lobber,
+        grid: {
+            columns: 1,
+            rows: 8,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        },
+    }),
+    LobberWalk: SpriteSheet.fromImageSource({
+        image: Resources.LobberWalk,
+        grid: {
+            columns: 2,
+            rows: 8,
             spriteHeight: 64,
             spriteWidth: 64,
         },
