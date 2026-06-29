@@ -8,21 +8,22 @@ import { UI } from '../../ui.js'
 import { WallCollider } from './wall-collider.js'
 import { Bush } from '../../enemies/George.js'
 import { Lobber } from '../../enemies/Lobber.js'
+import { CorpoJoe, Pillar } from '../../objects/objects.js'
 
 
 // . = floor, # = wall, D = door
 export const MAP = [
-    '####################',
-    '#..................#',
-    '#..................#',
-    '#.#..........#.....#',
-    '#.#....0...........#',
-    '#..................D',
-    '#.#.####.#.#.####..#',
-    '#.#.........#.#..#.#',
-    '#.##..#.###...#.##.#',
-    '#..................#',
-    '####################',
+    '#################',
+    '#...............#',
+    '#.#######.###.###',
+    '#....#....#.....#',
+    '#.#C.#C.#.#.P.P.#',
+    '#.#######....C..D',
+    '#.#.C#C.#.#.P.P.#',
+    '#....#....#.....#',
+    '#.#######.###.###',
+    '#...............#',
+    '#################',
 ]
 
 export const isWallTile = (char) => char === '#' || char === 'D' || char === 'L'
@@ -101,6 +102,15 @@ export class MapLevel1 extends MapEngine {
 
                 if (this.map[y][x] === '0') {
                     const obj = new Lobber(new Vector(x, y), 90, this.player)
+                    this.add(obj)
+                }   
+
+                if (this.map[y][x] === 'P') {
+                    const obj = new Pillar(new Vector(x + 0.5, y + 0.5), 90, this.player)
+                    this.add(obj)
+                }
+                if (this.map[y][x] === 'C') {
+                    const obj = new CorpoJoe(new Vector(x + 0.5, y + 0.5), 90, this.player)
                     this.add(obj)
                 }
             }

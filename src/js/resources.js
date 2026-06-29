@@ -18,6 +18,12 @@ const Resources = {
     PaintSplatter: new ImageSource('images/ui/paint-splatter.png'),
     Fists: new ImageSource('images/ui/fists.png'),
 
+    Pillar: new ImageSource('images/pillar.png'),
+    Rock: new ImageSource('images/rock.png'),
+    Corpo: new ImageSource('images/corpocarwyn.png'),
+    TreeTop: new ImageSource('images/bigtreetop.png'),
+    TreeBottom: new ImageSource('images/bigtreebottom.png'),
+
     BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
         filtering: ImageFiltering.Pixel
     }),
@@ -126,6 +132,49 @@ const Sheets = {
             spriteWidth: 128,
         },
     }),
+    Pillar: SpriteSheet.fromImageSource({
+        image: Resources.Pillar,
+        grid: {
+            columns: 1,
+            rows: 1,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        },
+    }),
+    Rock: SpriteSheet.fromImageSource({
+        image: Resources.Rock,
+        grid: {
+            columns: 1,
+            rows: 1,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        },
+    }),
+    Corpo: SpriteSheet.fromImageSource({
+        image: Resources.Corpo,
+        grid: {
+            columns: 1,
+            rows: 1,
+            spriteHeight: 512,
+            spriteWidth: 512,
+        },
+    }),
+    TreeBottom: SpriteSheet.fromImageSource({
+        image: Resources.TreeBottom,
+        grid: {
+            columns: 1,
+            rows: 1,
+            spriteHeight: 64,
+            spriteWidth: 64,
+        },
+    }),
+    TreeTop: SpriteSheet.fromImageSource({
+        image: Resources.TreeTop,
+        grid: {
+            columns: 1,
+            rows: 1,
+            spriteHeight: 64,
+            spriteWidth: 64,
     Fists: SpriteSheet.fromImageSource({
         image: Resources.Fists,
         grid: {

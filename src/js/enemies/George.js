@@ -1,6 +1,7 @@
 import { EnemyBase } from "./EnemyBase";
 import { Vector, toRadians } from "excalibur";
 import { Sheets } from "../resources";
+import { addAngle } from "../functions";
 
 export class Bush extends EnemyBase {
     constructor(spawnerPos, dir, player) {
@@ -39,18 +40,19 @@ export class Bush extends EnemyBase {
 
         if(this.checkLOS()) {
 
-            this.TGT.y = this.PLAYER.y
-            this.TGT.x = this.PLAYER.x
-            this.faceTGT()
+            this.TGT.y = this.PLAYER.pos.y
+            this.TGT.x = this.PLAYER.pos.x
 
         }
-
+        this.TGT.y = this.PLAYER.pos.y
+        this.TGT.x = this.PLAYER.pos.x
         
-        this.vel.x = Math.sin(toRadians(this.dir))
-        this.vel.y = Math.cos(toRadians(this.dir))
+        this.faceTGT()
+        this.dir = addAngle(this.dir, 90)
+        this.vel.x = Math.sin(toRadians(this.dir - 90))
+        this.vel.y = Math.cos(toRadians(this.dir - 90))
         let distvect = this.pos.sub(this.PLAYER.pos)
         let dist = (distvect.x * distvect.x) + (distvect.y * distvect.y)
-        this.dir += 90
         if(dist < 2) {
             this.state = 3
             this.attackTimer = 0

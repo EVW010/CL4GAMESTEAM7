@@ -8,20 +8,28 @@ import { MapEngine } from '../MapEngine.js'
 import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
 import { WallCollider } from '../level1/wall-collider.js'
+import { Rock, BigTreeBottom, BigTreeTop } from '../../objects/objects.js'
+import { Bush } from '../../enemies/George.js'
 
 // . = floor, # = wall, D = door
 export const MAP = [
-    '####################',
-    '#..................#',
-    '#.##..#.....#.#.##.#',
-    '#.#0........#..#.#.#',
-    '#.#....0....####.#.#',
-    '#..................D',
-    '#.#.####.#.#.####..#',
-    '#.#.........#.#..#.#',
-    '#.##..#.###...#.##.#',
-    '#..................#',
-    '##################L#',
+    '#################',
+    '#...#..R....#..B#',
+    '###.#.###.#...T.#',
+    '#...#B..#T#.#R..#',
+    '#.#.###.#.#.###.#',
+    '#.....#.#.#...#.#',
+    '#.#.##.....##.#B#',
+    '#.#.#..TRT....#.#',
+    '#.####.RBR.####.#',
+    '#......TRT..#...#',
+    '####.#.....##.###',
+    '#.....#.##..#.#..',
+    '#.#####.###.#.###',
+    '#.#...#..B#.#..R#',
+    '#.#.#.#####.###.#',
+    '#...#..B.B..#.B.#',
+    '#############D###',
 ]
 
 export const isWallTile = (char) => char === '#' || char === 'D' || char === 'L'
@@ -93,11 +101,21 @@ export class MapLevel2 extends MapEngine {
                     this.add(wall)
                 }
 
-                if (this.map[y][x] === '0') {
-                    const obj = new RenderObject(new Vector(x, y), 90, this.player)
+                if (this.map[y][x] === 'B') {
+                    const obj = new Bush(new Vector(x + 0.5, y + 0.5), 90, this.player)
                     this.add(obj)
-                    const objt = new RenderObject(new Vector(x, y), 180, this.player)
-                    obj.vertical = 10
+                }
+
+                if (this.map[y][x] === 'R') {
+                    const obj = new Rock(new Vector(x + 0.5, y + 0.5), 90, this.player)
+                    this.add(obj)
+                }
+
+                if (this.map[y][x] === 'T') {
+                    const obj = new BigTreeBottom(new Vector(x + 0.5, y + 0.5), 90, this.player)
+                    this.add(obj)
+                    const objt = new BigTreeTop(new Vector(x + 0.5, y + 0.5), 180, this.player)
+                    objt.vertical = 10
                     this.add(objt)
                 }
             }
