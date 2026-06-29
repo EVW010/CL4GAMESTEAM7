@@ -1,13 +1,15 @@
 import { Actor, Engine, Vector, DisplayMode, Keys, CircleCollider } from "excalibur"
 import { Sheets, Resources } from '../resources.js'
+import { MeleeHitbox } from './melee-hitbox.js'
+
 
 export class Fists extends Actor {
 
     game;
-    damage = 10;
+    damage = 2;
     player;
     inventoryPlacement;
-    range = 0.6;
+    range = 0.8;
 
     constructor(player, inventoryPlacement) {
         super();
@@ -30,7 +32,7 @@ export class Fists extends Actor {
         if (this.player.selectedWeapon == this.inventoryPlacement) {
             if (engine.input.keyboard.wasPressed(Keys.Space)) {
                 this.attack();
-                console.log("attack!!");
+                // console.log("attack!!");
             }
             this.pos = new Vector(Math.sin(this.player.pixelsWalked/8)*12, Math.sin(this.player.pixelsWalked/4)*6 + 10);
         } else {
@@ -40,7 +42,7 @@ export class Fists extends Actor {
     }
 
     attack() {
-        // deal damage to nearby enemies
+        this.scene.add(new MeleeHitbox(this.player.pos, this.player, this.range, this.damage))
         // if hit something
             this.player.hp -= 0.5;
         //

@@ -2,6 +2,7 @@ import { RenderObject } from "../renderBase/renderbase";
 import { Vector, toDegrees, toRadians } from "excalibur";
 import { Sheets } from "../resources";
 import { addAngle } from "../functions";
+import { MeleeHitbox } from "../weapons/melee-hitbox";
 
 export class EnemyBase extends RenderObject {
     constructor(spawnerPos, dir, player, radius, health) {
@@ -19,13 +20,15 @@ export class EnemyBase extends RenderObject {
 
         this.state = 1
 
+        this.events.on("collisionstart", (event) => this.collide(event));
+
     }
 
     takeDamage(amount) {
         this.health -= amount * this.dmgmod
         console.log(this.health)
 
-        if(this.health >= 0) {
+        if(this.health <= 0) {
 
             // if(typeof this.deathEffect()  === 'function') {
             //     this.deathEffect()
@@ -98,6 +101,14 @@ export class EnemyBase extends RenderObject {
         }
 
         
+    }
+
+    collide(event) {
+        const otherObject = event.other.owner;
+        if (otherObject instanceof MeleeHitbox) {
+            this.takeDamage(otherObject.dmg)
+            console.log("enemy collision with melee-hitbox detected.")
+        }
     }
 
 }

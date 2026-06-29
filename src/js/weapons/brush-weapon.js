@@ -1,6 +1,7 @@
 import { Actor, Engine, Vector, DisplayMode, Keys, CircleCollider } from "excalibur"
 import { Resources } from '../resources.js'
 import { PaintSplatter } from './paint-splatter.js'
+import { MeleeHitbox } from './melee-hitbox.js'
 
 export class BrushWeapon extends Actor {
 
@@ -8,7 +9,7 @@ export class BrushWeapon extends Actor {
     damage = 10;
     player;
     inventoryPlacement;
-    range = 1;
+    range = 1.5;
 
     constructor(player, inventoryPlacement) {
         super();
@@ -38,7 +39,7 @@ export class BrushWeapon extends Actor {
     }
 
     attack() {
-        // deal damage to nearby enemies
+        this.scene.add(new MeleeHitbox(this.player.pos, this.player, this.range, this.damage))
         this.parent.addChild(new PaintSplatter(this.parent.pos, this.player.paintProgress))
         this.player.paintProgress++;
         this.rotation = -0.4;
