@@ -78,12 +78,13 @@ export class ViewObject extends Actor {
 
         let dist = toObj.magnitude
         let scalar = 1 / (dist) // prevent division by 0 in rare cases
+        this.transform.z = scalar
         let sprite = this.linked.sheet.getSprite(0, 0)
         scalar = scalar / ( sprite.height / 64) // Scale sprite based on size so that the bottom aways aligns with the ground.
         scalar = scalar * 16.5
         this.scale.x = scalar
         this.scale.y = scalar
-        this.transform.z = scalar
+        
 
         this.pos.y = ((364) - (this.linked.vertical * 100.6 / (dist))) - 14.5
 

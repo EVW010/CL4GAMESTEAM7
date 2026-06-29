@@ -3,12 +3,14 @@ import { Sheets } from '../resources.js'
 import { RenderObject } from '../renderBase/renderbase.js'
 import { addAngle } from "../functions.js";
 import { WallCollider } from "../maps/level1/wall-collider.js";
+import { EnemyBase } from "../enemies/EnemyBase.js";
+
 
 export class Bullet extends RenderObject {
 
     game;
     fromWeapon;
-    damage;
+    damage = 4;
     movementSpeed = 6;
 
     constructor(pos, rotation, damage, player) {
@@ -40,6 +42,11 @@ export class Bullet extends RenderObject {
         if (otherObject instanceof WallCollider) {
             this.linked.kill();
             this.kill();
+        }
+        if (otherObject instanceof EnemyBase) {
+            this.linked.kill();
+            this.kill();
+            otherObject.takeDamage(this.damage)
         }
         // console.log(otherObject);
     }

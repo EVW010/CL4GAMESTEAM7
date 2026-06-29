@@ -3,6 +3,7 @@ import { Resources } from './resources.js'
 import { BurnerWeapon } from './weapons/burner-weapon.js'
 import { CanWeapon } from './weapons/can-weapon.js'
 import { OxygenMask } from './weapons/oxygen-mask.js'
+import { BrushWeapon } from './weapons/brush-weapon.js'
 
 const SCREEN_W = 1280
 const SCREEN_H = 720
@@ -33,6 +34,7 @@ export class UI extends ScreenElement {
         this.graphics.use(hudCanvas)
         this.addChild(new BurnerWeapon(this.player, 1));
         this.addChild(new CanWeapon(this.player, 2));
+        this.addChild(new BrushWeapon(this.player, 3));
         this.addChild(new OxygenMask(this.player, 4));
     }
 

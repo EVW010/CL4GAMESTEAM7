@@ -7,15 +7,16 @@ import { RenderObject } from '../../renderBase/renderbase.js'
 import { UI } from '../../ui.js'
 import { WallCollider } from './wall-collider.js'
 import { Bush } from '../../enemies/George.js'
+import { Lobber } from '../../enemies/Lobber.js'
 
 
 // . = floor, # = wall, D = door
 export const MAP = [
     '####################',
     '#..................#',
-    '#.##..#.....#.#.##.#',
-    '#.#0........#..#.#.#',
-    '#.#....0....####.#.#',
+    '#..................#',
+    '#.#..........#.....#',
+    '#.#....0...........#',
     '#..................D',
     '#.#.####.#.#.####..#',
     '#.#.........#.#..#.#',
@@ -99,11 +100,8 @@ export class MapLevel1 extends MapEngine {
                 }
 
                 if (this.map[y][x] === '0') {
-                    const obj = new RenderObject(new Vector(x, y), 90, this.player)
+                    const obj = new Lobber(new Vector(x, y), 90, this.player)
                     this.add(obj)
-                    const objt = new RenderObject(new Vector(x, y), 180, this.player)
-                    obj.vertical = 10
-                    this.add(objt)
                 }
             }
         }
