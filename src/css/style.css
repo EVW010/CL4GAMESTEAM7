@@ -59,11 +59,6 @@ canvas {
 
     image-rendering: pixelated;
 
-    /*
-       Belangrijk:
-       cover cropt je game.
-       fill vult het hele scherm zonder borders.
-    */
     object-fit: fill !important;
 }
 
@@ -305,6 +300,9 @@ canvas {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 1;
+
+    pointer-events: none;
 
     background:
         linear-gradient(
@@ -885,5 +883,88 @@ canvas {
 
     .weapon-info-box {
         max-width: 520px;
+    }
+}
+
+/* RECLAIMED BY NATURE INTRO */
+
+/* Menu is eerst verborgen tijdens de intro */
+.game-over-screen .end-menu {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2s ease;
+}
+
+/* Na de intro komt je oude Game Over menu terug */
+.game-over-screen.show-normal-game-over .end-menu {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Intro tekst bovenop de Game Over achtergrond */
+.game-over-intro {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: transparent;
+    pointer-events: none;
+
+    opacity: 1;
+    transition: opacity 2s ease;
+}
+
+/* Intro verdwijnt langzaam */
+.game-over-screen.show-normal-game-over .game-over-intro {
+    opacity: 0;
+}
+
+/* Grote RECLAIMED BY NATURE tekst */
+.game-over-intro-title {
+    margin: 0;
+
+    max-width: 90vw;
+
+    font-size: clamp(32px, 7vw, 90px);
+    line-height: 1.25;
+
+    color: #ff3333;
+    letter-spacing: 3px;
+
+    text-align: center;
+    text-transform: uppercase;
+
+    text-shadow:
+        3px 3px 0 #000,
+        6px 6px 0 #6b0000,
+        9px 9px 0 #250000,
+        0 0 18px rgba(255, 51, 51, 0.8);
+
+    animation: reclaimedIntroZoom 2.5s ease-out forwards;
+}
+
+/* Titel in het normale Game Over menu */
+.reclaimed-menu-title {
+    font-size: clamp(34px, 6vw, 64px);
+}
+
+/* Geen flash, alleen rustige fade/zoom */
+@keyframes reclaimedIntroZoom {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.04);
     }
 }
