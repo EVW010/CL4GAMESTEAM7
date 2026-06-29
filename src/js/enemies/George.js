@@ -4,7 +4,7 @@ import { Sheets } from "../resources";
 
 export class Bush extends EnemyBase {
     constructor(spawnerPos, dir, player) {
-        super(spawnerPos, dir, player, 0.2, 7)
+        super(spawnerPos, dir, player, 0.2, 10)
 
         this.attackTimer = 0
 

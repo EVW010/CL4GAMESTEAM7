@@ -6,7 +6,7 @@ import { MeleeHitbox } from './melee-hitbox.js'
 export class BrushWeapon extends Actor {
 
     game;
-    damage = 10;
+    damage = 6;
     player;
     inventoryPlacement;
     range = 1.5;

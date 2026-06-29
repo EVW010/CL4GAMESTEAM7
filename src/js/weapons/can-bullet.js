@@ -11,7 +11,7 @@ export class CanBullet extends RenderObject {
 
     game;
     fromWeapon;
-    damage = 2;
+    damage = 6;
     movementSpeed = 4;
     archSpeed = 0.475;
     canMove = true;
