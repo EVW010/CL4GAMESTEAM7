@@ -10,7 +10,7 @@ export class Bullet extends RenderObject {
 
     game;
     fromWeapon;
-    damage = 4;
+    damage;
     movementSpeed = 6;
 
     constructor(pos, rotation, damage, player) {
