@@ -175,6 +175,8 @@ const Sheets = {
             rows: 1,
             spriteHeight: 64,
             spriteWidth: 64,
+        },
+    }),
     Fists: SpriteSheet.fromImageSource({
         image: Resources.Fists,
         grid: {
