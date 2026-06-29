@@ -14,6 +14,7 @@ const Resources = {
     CanAllert: new ImageSource('images/can-allert.png'),
     BrushWeapon: new ImageSource('images/ui/brush-weapon.png'),
     PaintSplatter: new ImageSource('images/ui/paint-splatter.png'),
+    Fists: new ImageSource('images/ui/fists.png'),
 
     BarBorderVertical: new ImageSource('images/ui/bar-border-vertical.png', {
         filtering: ImageFiltering.Pixel
@@ -100,6 +101,15 @@ const Sheets = {
         image: Resources.PaintSplatter,
         grid: {
             columns: 5,
+            rows: 1,
+            spriteHeight: 72,
+            spriteWidth: 128,
+        },
+    }),
+    Fists: SpriteSheet.fromImageSource({
+        image: Resources.Fists,
+        grid: {
+            columns: 2,
             rows: 1,
             spriteHeight: 72,
             spriteWidth: 128,

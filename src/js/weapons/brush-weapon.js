@@ -8,6 +8,7 @@ export class BrushWeapon extends Actor {
     damage = 10;
     player;
     inventoryPlacement;
+    range = 1;
 
     constructor(player, inventoryPlacement) {
         super();
