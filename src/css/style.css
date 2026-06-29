@@ -6,8 +6,9 @@
 
 html,
 body {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+
     margin: 0;
     padding: 0;
 
@@ -37,8 +38,11 @@ body {
     padding: 0;
 
     overflow: hidden;
+
+    background: #000;
 }
 
+/* Canvas volledig scherm zonder borders */
 canvas {
     position: fixed;
     inset: 0;
@@ -54,7 +58,13 @@ canvas {
     background: #000;
 
     image-rendering: pixelated;
-    object-fit: cover;
+
+    /*
+       Belangrijk:
+       cover cropt je game.
+       fill vult het hele scherm zonder borders.
+    */
+    object-fit: fill !important;
 }
 
 .hidden {
@@ -82,6 +92,8 @@ canvas {
     color: white;
     image-rendering: pixelated;
     font-family: "Press Start 2P", "Courier New", monospace;
+
+    overflow: hidden;
 }
 
 .retro-overlay {
@@ -271,6 +283,8 @@ canvas {
     color: white;
     font-family: "Press Start 2P", "Courier New", monospace;
     image-rendering: pixelated;
+
+    overflow: hidden;
 }
 
 .game-over-screen {
@@ -497,6 +511,8 @@ canvas {
     color: white;
     image-rendering: pixelated;
     font-family: "Press Start 2P", "Courier New", monospace;
+
+    overflow: hidden;
 }
 
 .weapons-menu {
@@ -715,4 +731,159 @@ canvas {
         3px 3px 0 #000,
         6px 6px 0 #4d0000,
         0 0 12px #ff6666;
+}
+
+/* MINIMAP FIX */
+.minimap,
+.mini-map,
+#minimap,
+#miniMap {
+    position: fixed !important;
+
+    top: 24px !important;
+    right: 24px !important;
+
+    width: clamp(110px, 14vw, 180px) !important;
+    aspect-ratio: 1 / 1;
+
+    z-index: 9999 !important;
+
+    transform: none !important;
+}
+
+/* RESPONSIVE FIX VOOR KLEINE LAPTOPSCHERMEN */
+@media (max-height: 760px) {
+    .retro-title {
+        font-size: 42px;
+        margin-bottom: 20px;
+    }
+
+    .game-label {
+        font-size: 10px;
+        margin-bottom: 16px;
+    }
+
+    .game-synopsis {
+        font-size: 10px;
+        margin-bottom: 24px;
+        line-height: 1.8;
+    }
+
+    .menu-option {
+        font-size: 16px;
+        padding: 12px 0;
+        margin-bottom: 14px;
+    }
+
+    .info-text {
+        margin-top: 20px;
+    }
+
+    .info-text p {
+        font-size: 10px;
+        margin: 9px 0;
+    }
+
+    .enter-text {
+        margin-top: 22px;
+        font-size: 9px;
+    }
+
+    .game-over-title,
+    .end-card h1 {
+        font-size: 44px;
+        margin-bottom: 22px;
+    }
+
+    .end-text,
+    .end-card p {
+        font-size: 10px;
+        margin-bottom: 28px;
+    }
+
+    .end-option,
+    .end-card button {
+        font-size: 16px;
+        padding: 12px 0;
+        margin-bottom: 14px;
+    }
+
+    .weapons-title {
+        font-size: 32px;
+        margin-bottom: 16px;
+    }
+
+    .weapons-text {
+        font-size: 9px;
+        margin-bottom: 18px;
+        line-height: 1.7;
+    }
+
+    .weapon-grid {
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .weapon-card {
+        min-height: 105px;
+        padding: 10px 8px;
+    }
+
+    .weapon-icon {
+        width: 46px;
+        height: 46px;
+        margin-bottom: 10px;
+    }
+
+    .weapon-info-box {
+        min-height: 110px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+    }
+
+    .weapon-info-box p {
+        font-size: 8px;
+        line-height: 1.7;
+    }
+
+    .back-button {
+        font-size: 13px;
+        padding: 11px 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .retro-menu,
+    .end-menu,
+    .end-card,
+    .weapons-menu {
+        width: 92%;
+    }
+
+    .retro-title {
+        font-size: 40px;
+    }
+
+    .game-over-title,
+    .end-card h1 {
+        font-size: 42px;
+    }
+
+    .menu-options,
+    .end-options {
+        width: 340px;
+    }
+
+    .info-text {
+        width: 90%;
+    }
+
+    .weapon-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 520px;
+    }
+
+    .weapon-info-box {
+        max-width: 520px;
+    }
 }
