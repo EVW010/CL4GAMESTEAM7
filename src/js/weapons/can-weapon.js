@@ -5,7 +5,7 @@ import { CanBullet } from './can-bullet.js'
 export class CanWeapon extends Actor {
 
     game;
-    damage = 10;
+    damage = 5;
     player;
     inventoryPlacement;
 

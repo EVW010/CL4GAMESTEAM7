@@ -16,6 +16,7 @@ const Resources = {
     LobberWalk : new ImageSource('./images/LobberWalk.png'),
     BrushWeapon: new ImageSource('images/ui/brush-weapon.png'),
     PaintSplatter: new ImageSource('images/ui/paint-splatter.png'),
+    Fists: new ImageSource('images/ui/fists.png'),
 
     Pillar: new ImageSource('images/pillar.png'),
     Rock: new ImageSource('images/rock.png'),
@@ -174,6 +175,13 @@ const Sheets = {
             rows: 1,
             spriteHeight: 64,
             spriteWidth: 64,
+    Fists: SpriteSheet.fromImageSource({
+        image: Resources.Fists,
+        grid: {
+            columns: 2,
+            rows: 1,
+            spriteHeight: 72,
+            spriteWidth: 128,
         },
     }),
 }

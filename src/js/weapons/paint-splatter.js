@@ -24,7 +24,7 @@ export class PaintSplatter extends Actor {
         this.timerMax = 300 + 15*playerProgress;
         this.timer = 0;
 
-        console.log(this.graphics.opacity)
+        // console.log(this.graphics.opacity)
     }
 
     onPreUpdate(engine, delta) {

@@ -124,6 +124,7 @@ export class Player extends Actor {
             if (this.selectedWeapon > 5) {
                 this.selectedWeapon = 1;
             }
+            // console.log(this.selectedWeapon);
         }
 
         if (engine.input.keyboard.wasPressed(Keys.Space) && this.selectedWeapon == 3) {

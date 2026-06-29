@@ -1,15 +1,15 @@
 import { Actor, Engine, Vector, DisplayMode, Keys, CircleCollider } from "excalibur"
-import { Resources } from '../resources.js'
-import { PaintSplatter } from './paint-splatter.js'
+import { Sheets, Resources } from '../resources.js'
 import { MeleeHitbox } from './melee-hitbox.js'
 
-export class BrushWeapon extends Actor {
+
+export class Fists extends Actor {
 
     game;
-    damage = 6;
+    damage = 2;
     player;
     inventoryPlacement;
-    range = 1.5;
+    range = 0.8;
 
     constructor(player, inventoryPlacement) {
         super();
@@ -19,29 +19,33 @@ export class BrushWeapon extends Actor {
 
     onInitialize(engine) {
         this.game = engine;
-        this.graphics.use(Resources.BrushWeapon.toSprite());
-        this.rotation = 0.1;
-        this.pos = new Vector(1050, 575);
-        this.scale = new Vector(1.7, 1.7);
+        this.sheet = Sheets.Fists;
+        this.pos = new Vector(0, 10);
+        this.scale = new Vector(10, 10);
+        this.frame = 0;
+        this.anchor = new Vector(0, 0);
+        this.graphics.use(this.sheet.getSprite(this.frame, 0))
     }
 
     onPreUpdate(engine) {
+        this.frame = 0;
         if (this.player.selectedWeapon == this.inventoryPlacement) {
-            this.rotation = 0.1;
             if (engine.input.keyboard.wasPressed(Keys.Space)) {
                 this.attack();
+                // console.log("attack!!");
             }
-            this.pos = new Vector(1050 + Math.sin(this.player.pixelsWalked/8)*12, 575 + Math.sin(this.player.pixelsWalked/4)*6);
+            this.pos = new Vector(Math.sin(this.player.pixelsWalked/8)*12, Math.sin(this.player.pixelsWalked/4)*6 + 10);
         } else {
             this.pos.y = 2000;
         }
-        
+        this.graphics.use(this.sheet.getSprite(this.frame, 0))
     }
 
     attack() {
         this.scene.add(new MeleeHitbox(this.player.pos, this.player, this.range, this.damage))
-        this.parent.addChild(new PaintSplatter(this.parent.pos, this.player.paintProgress))
-        this.player.paintProgress++;
-        this.rotation = -0.4;
+        // if hit something
+            this.player.hp -= 0.5;
+        //
+        this.frame = 1;
     }
 }

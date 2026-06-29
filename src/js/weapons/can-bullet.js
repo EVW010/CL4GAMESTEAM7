@@ -11,7 +11,7 @@ export class CanBullet extends RenderObject {
 
     game;
     fromWeapon;
-    damage = 2;
+    damage;
     movementSpeed = 4;
     archSpeed = 0.475;
     canMove = true;
@@ -82,10 +82,11 @@ export class CanBullet extends RenderObject {
                 this.kill();
             }
         }
-        if (otherObject instanceof EnemyBase) {
-            this.linked.kill();
-            this.kill();
+        if (otherObject instanceof EnemyBase && this.canMove) {
+            // this.linked.kill();
+            // this.kill();
             otherObject.takeDamage(this.damage)
+            this.rotation += Math.PI;
         }
     }
 }
