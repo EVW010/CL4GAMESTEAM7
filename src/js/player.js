@@ -40,8 +40,8 @@ export class Player extends Actor {
 
     onInitialize(engine) {
         this.game = engine
-
-        this.resetPlayer()
+        this.pos.x = 1.5
+        this.pos.y = 1.5
     }
 
     resetPlayer() {
@@ -180,7 +180,8 @@ export class Player extends Actor {
             getDoorTransition(this.pos.x, this.pos.y - doorReach)
 
         if (transition) {
-            this.resetPlayer()
+            this.pos.x = 1.5
+            this.pos.y = 1.5
             engine.goToScene(transition)
             return
         }
