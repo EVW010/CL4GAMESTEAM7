@@ -45,8 +45,7 @@ export class Player extends Actor {
     }
 
     resetPlayer() {
-        this.pos = new Vector(1.5, 1.5)
-        this.rotation = 0
+        this.resetPosition()
 
         this.hp = this.maxHp
         this.oxygenLevel = this.maxoxygenLevel
@@ -56,6 +55,11 @@ export class Player extends Actor {
         this.selectedWeapon = 1
 
         this.isDead = false
+    }
+
+    resetPosition() {
+        this.pos = new Vector(1.5, 1.5)
+        this.rotation = 0
         this.vel = new Vector(0, 0)
     }
 

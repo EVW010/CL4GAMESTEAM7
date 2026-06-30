@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(git -C \"c:\\\\Users\\\\coast\\\\Downloads\\\\CLE 4\\\\CL4GAMESTEAM7\" status)",
+      "Bash(git -C \"c:\\\\Users\\\\coast\\\\Downloads\\\\CLE 4\\\\CL4GAMESTEAM7\" log --oneline -10)"
     ],
     "additionalDirectories": [
       "C:\\Users\\coast\\Downloads\\CLE 4\\CL4GAMESTEAM7\\src\\js\\maps\\Level3\\assets\\walls"
