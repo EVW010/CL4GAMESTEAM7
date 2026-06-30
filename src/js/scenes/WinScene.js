@@ -82,6 +82,8 @@ export class WinScene extends Scene {
             this.engine.player.resetPlayer()
         }
 
+        this.engine.resetLevels?.()
+
         this.engine.goToScene('level1')
     }
 
@@ -91,6 +93,8 @@ export class WinScene extends Scene {
         if (this.engine.player) {
             this.engine.player.resetPlayer()
         }
+
+        this.engine.resetLevels?.()
 
         this.engine.goToScene('startScreen')
     }
