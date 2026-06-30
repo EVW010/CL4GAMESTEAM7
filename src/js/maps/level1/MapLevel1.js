@@ -35,6 +35,7 @@ export class MapLevel1 extends MapEngine {
         this.wallTextureMap = {}
         this.skyColor = 'rgb(30, 35, 45)'
         this.floorColor = 'rgb(55, 58, 65)'
+        this.player.resetPlayer()
     }
     
 
